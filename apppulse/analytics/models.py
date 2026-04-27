@@ -54,3 +54,39 @@ class UsageEvent(models.Model):
         ordering = ["-timestamp"]
     def __str__(self):
         return f"{self.customer.company_name} - {self.event_type}"
+    
+
+class CustomerHealth(models.Model):
+    RISK_LABEL_CHOICES = [
+        ("healthy", "Healthy"),
+        ("watch", "Watch"),
+        ("high_risk", "High Risk")
+    ]
+    
+    customer = models.OneToOneField(
+        Customer, 
+        on_delete=models.CASCADE,
+        related_name="health"
+    )
+    
+    usage_score = models.FloatField(default=0)
+    feature_adoption_score = models.FloatField(default=0)
+    reliability_score = models.FloatField(default=0)
+    support_score = models.FloatField(default=0)
+    
+    health_score = models.FloatField(default=0)
+    churn_risk = models.FloatField(default=0)
+    
+    risk_label = models.CharField(
+        max_length=20,
+        choices=RISK_LABEL_CHOICES,
+        default="watch"
+    )
+    
+    calculated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ["-health_score"]
+    
+    def __str__(self):
+        return f"{self.customer.company_name} - {self.risk_label}"
