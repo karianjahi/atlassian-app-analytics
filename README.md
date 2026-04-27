@@ -57,8 +57,8 @@ Each customer is scored based on:
 
 Health score formula:
 
-health_score = 0.4 \* usage_score + 0.25 \* feature_adoption_score + 0.2
-\* reliability_score + 0.15 \* support_score
+health_score = α \* usage_score + β \* feature_adoption_score + γ \*
+reliability_score + δ \* support_score
 
 Labels: - 80--100 → Healthy - 50--79 → Watch - 0--49 → High Risk
 
