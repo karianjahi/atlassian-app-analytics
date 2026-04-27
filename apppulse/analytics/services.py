@@ -46,6 +46,21 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth: # takes a c
     
     churn_risk = 100 - health_score
     
+    customer_health, created = CustomerHealth.objects.update_or_create(
+        customer=customer,
+        defaults={
+            "usage_score": round(usage_score, 2),
+            "feature_adoption_score": round(feature_adoption_score, 2),
+            "reliability_score": round(reliability_score, 2),
+            "support_score": round(support_count, 2),
+            "health_score": round(health_score, 2),
+            "churn_risk": round(churn_risk, 2),
+            "risk_label": risk_label
+        }
+        
+    )
+    return customer_health
+    
     
     
     
