@@ -44,11 +44,7 @@ questions.
 ### 2. Activation Funnel
 
 Tracks customer progression: 
-- App installed 
-- App configured 
-- First successful usage 
-- Repeated usage 
-- (Simulated) conversion to paid
+App installed → App configured → First successful usage → Repeated usage → (Simulated) conversion to paid
 
 ### 3. Customer Health Score
 
