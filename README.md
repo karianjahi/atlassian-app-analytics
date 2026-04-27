@@ -43,8 +43,12 @@ questions.
 
 ### 2. Activation Funnel
 
-Tracks customer progression: - App installed - App configured - First
-successful usage - Repeated usage - (Simulated) conversion to paid
+Tracks customer progression: 
+- App installed 
+- App configured 
+- First successful usage 
+- Repeated usage 
+- (Simulated) conversion to paid
 
 ### 3. Customer Health Score
 
@@ -60,7 +64,10 @@ Health score formula:
 health_score = α \* usage_score + β \* feature_adoption_score + γ \*
 reliability_score + δ \* support_score
 
-Labels: - 80--100 → Healthy - 50--79 → Watch - 0--49 → High Risk
+Labels: 
+- 80--100 → Healthy 
+- 50--79 → Watch 
+- 0--49 → High Risk
 
 ### 4. Churn Risk Prediction
 
@@ -102,8 +109,10 @@ app_name, event_type, timestamp
 
 ## Architecture
 
-Django (views + templates) \| \|-- pandas (data aggregation) \|--
-scikit-learn (churn model) \| PostgreSQL (customers + events)
+- Django (views + templates)
+- pandas (data aggregation)
+- scikit-learn (churn model)
+- PostgreSQL (customers + events)
 
 ## Data Model
 
@@ -135,60 +144,79 @@ scikit-learn (churn model) \| PostgreSQL (customers + events)
 
 ## Example Events
 
-installed_app configured_app created_clone used_dashboard_filter
-connected_external_data_source sync_failed opened_support_ticket
-subscription_cancelled
+- installed_app 
+- configured_app 
+- created_clone 
+- used_dashboard_filter
+- connected_external_data_source 
+- sync_failed 
+- opened_support_ticket
+- subscription_cancelled
 
 ## Running the Project
 
 ### 1. Clone repository
 
+```bash
 git clone https://github.com/karianjahi/atlassian-app-analytics.git
 cd atlassian-app-analytics
+```
 
 ### 2. Create virtual environment
 
-python -m venv venv source venv/bin/activate \# Linux / macOS
-venv`\Scripts`{=tex}`\activate      `{=tex}\# Windows
+```bash
+python -m venv venv 
+source venv/bin/activate
+```
 
 ### 3. Install dependencies
 
+```bash
 pip install -r requirements.txt
-
+```
 ### 4. Configure PostgreSQL
 
 Update `settings.py`:
 
+```bash
 DATABASES = { 'default': { 'ENGINE': 'django.db.backends.postgresql',
 'NAME': 'analytics_db', 'USER': 'postgres', 'PASSWORD': 'yourpassword',
 'HOST': 'localhost', 'PORT': '5432', } }
+```
 
 ### 5. Run migrations
-
+```bash
 python manage.py makemigrations python manage.py migrate
+```
 
 ### 6. Load sample data (optional)
-
+```bash
 python manage.py shell \>\>\> from analytics.services import
 generate_demo_data \>\>\> generate_demo_data()
+```
 
 ### 7. Start server
 
+```bash
 python manage.py runserver
+```
 
-Open: http://127.0.0.1:8000/
+Open: 
+```bash 
+http://127.0.0.1:8000/
+```
 
 ## Machine Learning
 
-The churn model is implemented using:
-
-sklearn.ensemble.RandomForestClassifier
+The churn model is implemented using `sklearn.ensemble.RandomForestClassifier`
 
 Feature engineering is done using pandas aggregation pipelines.
 
 This is a demo model trained on synthetic data, designed to
-illustrate: - feature engineering - model integration in a web app -
-real-world product analytics use cases
+illustrate: 
+- feature engineering 
+- model integration in a web app 
+- real-world product analytics use cases
 
 ## Privacy Considerations
 
@@ -207,9 +235,12 @@ aggregated, anonymized usage events
 
 ## Why This Project
 
-This project demonstrates: - Full-stack development with Django - Data
-processing with pandas - Applied machine learning with scikit-learn -
-Product-oriented thinking - Real-world SaaS analytics use cases
+This project demonstrates: 
+- Full-stack development with Django 
+- Data processing with pandas 
+- Applied machine learning with scikit-learn 
+- Product-oriented thinking 
+- Real-world Software as a Service (SaaS) analytics use cases
 
 It is designed as a prototype for analytics systems used by Atlassian
 Marketplace vendors.
