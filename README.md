@@ -9,8 +9,13 @@ This project is a full-stack analytics platform designed to help
 Atlassian Marketplace vendors understand how customers interact with
 their apps.
 
-It focuses on: - Customer activation and onboarding - Feature adoption -
-Usage patterns - Customer health scoring - Churn risk detection
+It focuses on: 
+
+- Customer activation and onboarding 
+- Feature adoption 
+- Usage patterns 
+- Customer health scoring 
+- Churn risk detection
 
 The goal is to provide actionable insights that help product teams
 improve retention, prioritize features, and identify struggling
