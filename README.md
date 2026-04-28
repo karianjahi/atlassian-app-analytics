@@ -143,7 +143,7 @@ subscription_cancelled
 
 ### 1. Clone repository
 
-git clone https://github.com/your-username/atlassian-app-analytics.git
+git clone https://github.com/karianjahi/atlas-app-analytics.git
 cd atlassian-app-analytics
 
 ### 2. Create virtual environment
