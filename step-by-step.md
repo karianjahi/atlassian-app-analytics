@@ -100,7 +100,24 @@ INSTALLED_APPS = [
 - Go to `http://127.0.0.1:8000/admin` and create objects manually
 - To run python scripts in django from the root, you must create a directory under the app known as management and a subdirectory called commands where you put all the scripts you need to interact with the database
 - To automatically generate instances in the database, I create the file `analytics/management/commands/generate_<model>.py` by first creating those directories and then the file.
-    - Run the command `python manage.py generate_<model>.py` to generate them
+    - Remember that for the script to run you must load the `BaseCommand` which must sit at the top of any script
+        `from django.core.management.base import BaseCommand`
+    - The script must have a handle function. If you want to return something, you must use `stdout.write` for strings. If what you return is not a string, you must convert it to one. See the example below
+    
+```bash
+from django.core.management.base import BaseCommand
+from analytics.models import Customer, CustomerHealth, UsageEvent
+
+# Get all Customer objects equivalent to SELECT * FROM customer
+class Command(BaseCommand):
+    help = "Interacting with the database"
+    def handle(self, *args, **kwargs):
+        all_customers = Customer.objects.all()
+        self.stdout.write(str(all_customers))
+
+```
+                
+    - Run the command `python manage.py generate_<model>` without `.py` extension to generate them
 - You can always run `sudo -u postgres psql` and query the database `atlassian_db` for each of these tables
     - `\c atlassian_db` - connect to the table
     - `\dt` -> See the tables
