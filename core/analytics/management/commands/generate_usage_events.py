@@ -33,7 +33,7 @@ class Command(BaseCommand):
         created = 0
 
         for customer in customers:
-            number_of_events = randint(10, 150)
+            number_of_events = randint(10, 80)
 
             for _ in range(number_of_events):
                 event_type = choice(event_types)
