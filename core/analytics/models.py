@@ -18,5 +18,5 @@ class Customer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.company_name (self.app_name)}"
+        return f"{self.company_name} {self.app_name}"
     
