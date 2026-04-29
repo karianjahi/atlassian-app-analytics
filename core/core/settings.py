@@ -76,11 +76,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'atlassian',
-        'USER': 'karianjahi',
-        'PASSWORD': 'JahyeT7?Tem',
+        'NAME': 'atlassian_db',
+        'USER': 'royce',
+        'PASSWORD': 'sanDro9llTa',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
