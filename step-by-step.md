@@ -98,12 +98,15 @@ INSTALLED_APPS = [
         - password: Sahel678
 - Run the server locally by running: `python manage.py runserver`
 - Go to `http://127.0.0.1:8000/admin` and create objects manually
+- To run python scripts in django from the root, you must create a directory under the app known as management and a subdirectory called commands where you put all the scripts you need to interact with the database
 - To automatically generate instances in the database, I create the file `analytics/management/commands/generate_<model>.py` by first creating those directories and then the file.
     - Run the command `python manage.py generate_<model>.py` to generate them
 - You can always run `sudo -u postgres psql` and query the database `atlassian_db` for each of these tables
     - `\c atlassian_db` - connect to the table
     - `\dt` -> See the tables
     - `SELECT * FROM <analytics_<table-name>;`
+
+- Create the health scoring logic using a new file `analytics/services.py`
 
 
 
