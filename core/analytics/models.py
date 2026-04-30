@@ -32,12 +32,14 @@ class UsageEvent(models.Model):
         ("subscription_cancelled", "Subscription Cancelled"),
     ]
     
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, 
+                                 on_delete=models.CASCADE, 
+                                 related_name="usage_events")
     event_type = models.CharField(max_length=100, choices=EVENT_CHOICES)
     timestamp = models.DateTimeField()
     metadata = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ["-timestamp"]
     
