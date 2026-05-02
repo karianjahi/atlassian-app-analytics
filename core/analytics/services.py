@@ -15,7 +15,7 @@ FEATURE_EVENTS = [
     "connected_external_data_source",
 ]
 
-def calculate_customer_health(customer: Customer):
+def calculate_customer_health(customer: Customer) -> CustomerHealth:
     # Get the earliest date to consider (last 30 days)
     now = timezone.now()
     last_30_days = now - timedelta(days=30)
