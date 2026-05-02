@@ -78,8 +78,4 @@ def calculate_customer_health(customer: Customer):
         }
     )
     return customer_health
-    
-    
-    
-    
-    
+  
