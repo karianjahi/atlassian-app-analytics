@@ -128,6 +128,9 @@ class Command(BaseCommand):
 - Create views for customer health. This accepts requests from server side.
 - Create URLs for the view
 - Include the app urls to the project urls
+- Create templates folder and add a `dashboard.html` file in the analytics folder as follows:
+    `analytics/templates/analytics/dashboard.html`
+- Update the dashboard.html using context from views
 
 
 
