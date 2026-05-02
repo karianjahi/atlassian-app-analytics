@@ -12,7 +12,9 @@ class Customer(models.Model):
         ("premium", "Premium")
     ]
     
-    license_tier = models.CharField(max_length=20, choices=LICENSE_CHOICES, default="free")
+    license_tier = models.CharField(max_length=20, 
+                                    choices=LICENSE_CHOICES, 
+                                    default="free")
     app_name = models.CharField(max_length=255)
     installed_at = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
