@@ -79,3 +79,15 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
     )
     return customer_health
   
+  # Calculate customer health for all customers
+  
+def calculate_customer_health_for_all_customers():
+    # Get all customers (as in the whole customer table)
+    customers = Customer.objects.all()
+    results = []
+    for customer in customers:
+        customer_health = calculate_customer_health(customer)
+        results.append(customer_health)
+    return results
+        
+          
