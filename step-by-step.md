@@ -126,6 +126,8 @@ class Command(BaseCommand):
 - Create the health scoring logic using a new file `analytics/services.py`
 - Calculate the health score for all customer in the `analytics/services.py`
 - Create views for customer health. This accepts requests from server side.
+- Create URLs for the view
+- Include the app urls to the project urls
 
 
 
