@@ -14,6 +14,30 @@
     <p>High risk: {{ high_risk_count }}</p>
 
     <h2>Customer Health Records</h2>
+    <table border="2">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Customer</th>
+                <th>App</th>
+                <th>Health Score</th>
+                <th>Churn Risk</th>
+                <th>Risk Label</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in health_records %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{record.customer.company_name}}</td>
+                <td>{{record.customer.app_name}}</td>
+                <td>{{record.health_score}}</td>
+                <td>{{record.churn_risk}}</td>
+                <td>{{record.risk_label}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     
 </body>
 </html>
