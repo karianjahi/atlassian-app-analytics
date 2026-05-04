@@ -31,7 +31,7 @@ def dashboard(request):
 
 def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
-    health = getattr(customer, "health", None)
+    health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
     recent_events = customer.usage_events.all()[:20]
     context = {
         "customer": customer,
