@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers
 
@@ -28,4 +28,15 @@ def dashboard(request):
     
     return render(request, "analytics/dashboard.html", context)
     
+
+def customer_detail(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    health = getattr(customer, "health", None)
+    recent_events = customer.usage_events.all()[:20]
+    context = {
+        "customer": customer,
+        "health": health,
+        "recent_events": recent_events
+    }
+    return render(request, "analytics/customer_detail.html", context)
     
