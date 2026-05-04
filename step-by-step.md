@@ -131,9 +131,29 @@ class Command(BaseCommand):
 - Create templates folder and add a `dashboard.html` file in the analytics folder as follows:
     `analytics/templates/analytics/dashboard.html`
 - Update the dashboard.html using context from views
+- Use canvas to draw a doughnut
+- Create static folder and add a `dashboard.js` under `analytics/static/analytics/js` and `dashboard.css` under `analytics/static/analytics/css`
 
+- Create the Customer detail page
+    - We want to have each customer clickable so we can inspect:
+        - company profile
+        - app name
+        - health score
+        - usage score
+        - feature adoption score
+        - reliability score
+        - support score
+        - churn risk
+        - recent events
+            - Create customer detail URL
+            - Create customer_detail view
+            - Create customer_detail.html
+            - Link each customer row from dashboard table
+            -  Display recent usage events
 
-
+    - Start by creating a customer_detail function in vies
+    - Then add a path for this view in `analytics.urls`
+    - Create a customer_detail.html page 
 
 
 
