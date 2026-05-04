@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlassian App Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'analytics/css/dashboard.css' %}"> 
 </head>
 <body>
     <h1>Customer Health Dashboard</h1>
@@ -12,7 +15,20 @@
     <p>Healthy: {{ healthy_count }}</p>
     <p>Watch: {{ watch_count }}</p>
     <p>High risk: {{ high_risk_count }}</p>
-
+    
+    <h2>Health Distribution</h2>
+    <div id="chartCanvas">
+        <canvas id="mychart"></canvas>
+    </div>
+    <script> // Django - Javascript bridge
+        window.healthData = {
+            healthy: {{ healthy_count }},
+            watch: {{ watch_count }},
+            high_risk: {{ high_risk_count }}
+        };
+    </script>
+    <script src="{% static 'analytics/js/dashboard.js' %}"></script>
+    
     <h2>Customer Health Records</h2>
     <table border="2">
         <thead>
@@ -35,9 +51,12 @@
                 <td>{{record.churn_risk}}</td>
                 <td>{{record.risk_label}}</td>
             </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No health records yet.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-    
 </body>
 </html>
