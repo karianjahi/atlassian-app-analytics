@@ -36,7 +36,24 @@ document.addEventListener("DOMContentLoaded", function() { // wait for html cont
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+
+                            // compute total from dataset
+                            const data = context.dataset.data;
+                            const total = data.reduce((sum, val) => sum + val, 0);
+
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${context.label}: ${value} (${percentage}%)`;
+
+                        }
+                    }
+                }
+            }
         }
     });
 });
