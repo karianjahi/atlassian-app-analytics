@@ -47,4 +47,5 @@ th {
     display: flex;
     flex-direction: row;
     gap: 2em;
+    padding-bottom: 2em;
 }
