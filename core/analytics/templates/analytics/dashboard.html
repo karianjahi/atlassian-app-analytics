@@ -8,15 +8,18 @@
     <title>Atlassian App Analytics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{% static 'analytics/css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <h1>Customer Health Dashboard</h1>
-    <p>Total Customers: {{ total_customers}}</p>
-    <p>Average healthy score: {{ average_health_score }}</p>
-    <p>Healthy: {{ healthy_count }}</p>
-    <p>Watch: {{ watch_count }}</p>
-    <p>High risk: {{ high_risk_count }}</p>
+
+    <div class="stats">
+        <div class="card">Total Customers<br><strong>{{ total_customers }}</strong></div>
+        <div class="card">Avg Health<br><strong>{{ average_health_score }}</strong></div>
+        <div class="card healthy">Healthy<br><strong>{{ healthy_count }}</strong></div>
+        <div class="card watch">Watch<br><strong>{{ watch_count }}</strong></div>
+        <div class="card risk">High Risk<br><strong>{{ high_risk_count }}</strong></div>
+    </div>
 
     <h2>Health Distribution</h2>
     <div id="chartCanvas">
@@ -29,7 +32,7 @@
             high_risk: {{ high_risk_count }}
         };
     </script> -->
-    
+
     {{ healthy_count|json_script:"healthy-count" }}
     {{ watch_count|json_script:"watch-count" }}
     {{ high_risk_count|json_script:"high-risk-count" }}
@@ -37,7 +40,7 @@
     <script src="{% static 'analytics/js/dashboard.js' %}"></script>
 
     <h2>Customer Health Records</h2>
-    <table border="2">
+    <table>
         <thead>
             <tr>
                 <th>No</th>
