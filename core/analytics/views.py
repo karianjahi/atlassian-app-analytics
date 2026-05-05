@@ -8,7 +8,6 @@ from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
 
 def dashboard(request):
-    calculate_customer_health_for_all_customers()
     
     total_customers = Customer.objects.count()
     health_records = CustomerHealth.objects.select_related("customer")
