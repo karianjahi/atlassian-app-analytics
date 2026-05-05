@@ -1,31 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const canvas = document.getElementById("eventChart");
+    
+    const eventLabels = JSON.parser(document.getElementById("event-labels").textContent);
+    const eventCounts = JSON.parse(document.getElementById("event-counts").textContent);
+    const timeLabels = JSON.parse(document.getElementById("time-labels").textContent);
+    const timeCounts = JSON.parse(document.getElementById("time-counts").textContent);
 
-    if (!canvas) {
-        console.error("eventChart canvas not found")
-        return;
-    }
 
-    if (!window.eventData) {
-        console.error("eventData not found")
-        return;
-    }
-
-    const ctx = canvas.getContext("2d");
-
-    new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: window.eventData.labels,
-            datasets: [{
-                label: "Number of Events",
-                data: window.eventData.counts,
-                backgroundColor: "#c2910a"
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRation: false
-        }
-    });
 });

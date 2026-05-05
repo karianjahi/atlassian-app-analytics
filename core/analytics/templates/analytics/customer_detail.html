@@ -43,17 +43,10 @@
         <canvas id="timeChart"></canvas>
     </div>
 
-    <script>
-        window.eventData = {
-            labels: {{ event_labels | safe }},
-        counts: { { event_counts | safe } }
-            };
-        
-        window.timeData = {
-            labels: {{time_labels|safe}},
-            counts: {{time_counts|safe}}
-        };
-    </script>
+    {{event_labels|json_script:"event-labels"}}
+    {{event_counts|json_script:"event-counts"}}
+    {{time_labels|json_script:"time-labels"}}
+    {{time_counts|json_script:"time-counts"}}
 
     <div id="events">
         <h2>Recent Events</h2>
