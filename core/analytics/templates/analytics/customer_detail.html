@@ -14,7 +14,9 @@
 <body>
     <header class="app-header">
         <div class="app-header-content">
-            <span class="brand">Authored by Dr. Joseph Njeri</span>
+            <a href="{% url 'dashboard' %}" class="brand">
+                <!-- Dr. Joseph Njeri -->
+            </a>
         </div>
     </header>
     <main class="page">
@@ -146,5 +148,8 @@
 
     <script src="{% static 'analytics/js/customer_detail.js' %}"></script>
 </body>
+<footer class="app-footer">
+    <p>© {% now "Y" %} Dr. Joseph Njeri. All rights reserved.</p>
+</footer>
 
 </html>
