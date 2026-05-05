@@ -31,7 +31,7 @@
                 <p><span>App</span>{{ customer.app_name }}</p>
                 <p><span>Country</span>{{ customer.country }}</p>
                 <p><span>Company size</span>{{ customer.company_size }}</p>
-                <p><span>License</span>{{ customer.license_tier }}</p>
+                <p><span>License</span>{{ customer.get_license_tier_display }}</p>
                 <p><span>Installation date</span>{{ customer.installed_at }}</p>
             </div>
         </section>
