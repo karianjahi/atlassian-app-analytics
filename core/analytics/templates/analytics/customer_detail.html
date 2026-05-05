@@ -5,112 +5,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{customer.company_name}}</title>
+    <title>{{ customer.company_name }}</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{% static 'analytics/css/customer_detail.css' %}">
 </head>
 
 <body>
-    <a href="{% url 'dashboard' %}">Back to dashboard</a>
-    <div id="customer_properties">
-        <h1>Company Name: {{customer.company_name}}</h1>
-        <p>App: {{customer.app_name}}</p>
-        <p>Country: {{customer.country}}</p>
-        <p>Company size: {{customer.company_size}}</p>
-        <p>License: {{customer.license_tier}}</p>
-        <p>Installation date: {{customer.installed_at}}</p>
-    </div>
+    <main class="page">
 
-    <div id="customer_health">
-        <h2>Customer Health</h2>
-        {% if health %}
-        <p>Usage Score: {{customer.health.usage_score}}</p>
-        <p>Feature Adoption Score: {{customer.health.feature_adoption_score}}</p>
-        <p>Reliability Score: {{customer.health.reliability_score}}</p>
-        <p>Support Score: {{customer.health.support_score}}</p>
-        <p>Health Score: {{customer.health.health_score}}</p>
-        <p>Churn Risk: {{customer.health.churn_risk}}</p>
-        <p>Risk Label: {{customer.health.risk_label}}</p>
-        {% else %}
-        <p>No health score calculated yet</p>
-        {% endif %}
-    </div>
-    <div id="riskReason">
-        <h2>Risk Explanation</h2>
-        <ul>
-            {% for reason in risk_reasons%}
-            <li>{{reason}}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div id="recommendedActions">
-        <h2>Recommended Actions</h2>
-        <ul>
-            {% for action in recommended_actions %}
-            <li>{{action}}</li>
-            {% endfor %}
-        </ul>
+        <a class="back-link" href="{% url 'dashboard' %}">← Back to dashboard</a>
 
-    </div>
-    <div id="selectRange">
-        <h3>Time Range Selection</h3>
-        <form method="get">
-            <label for="range">Time range:</label>
-            <select name="range" id="range" onchange="this.form.submit()">
-                <option value="7" {% if selected_range == "7" %} selected{% endif %}>Last 7 days</option>
-                <option value="30" {% if selected_range == "30" %} selected{% endif %}>Last 30 days</option>
-                <option value="90" {% if selected_range == "90" %} selected{% endif %}>Last 90 days</option>
-                <option value="all" {% if selected_range == "all" %} selected{% endif %}>All time</option>
-            </select>
+        <section id="customer_properties" class="card hero-card">
+            <h1>{{ customer.company_name }}</h1>
 
-        </form>
-    </div>
-    
-    <div class="plots">        
-        <div id="eventsChart">
-            <h2>Event Distribution</h2>
-            <canvas id="eventChart"></canvas>
+            <div class="details-grid">
+                <p><span>App</span>{{ customer.app_name }}</p>
+                <p><span>Country</span>{{ customer.country }}</p>
+                <p><span>Company size</span>{{ customer.company_size }}</p>
+                <p><span>License</span>{{ customer.license_tier }}</p>
+                <p><span>Installation date</span>{{ customer.installed_at }}</p>
+            </div>
+        </section>
+
+        <section id="customer_health" class="card">
+            <h2>Customer Health</h2>
+
+            {% if health %}
+            <div class="stats-grid">
+                <div class="stat">Usage Score<strong>{{ customer.health.usage_score }}</strong></div>
+                <div class="stat">Feature Adoption<strong>{{ customer.health.feature_adoption_score }}</strong></div>
+                <div class="stat">Reliability<strong>{{ customer.health.reliability_score }}</strong></div>
+                <div class="stat">Support<strong>{{ customer.health.support_score }}</strong></div>
+                <div class="stat highlight">Health Score<strong>{{ customer.health.health_score }}</strong></div>
+                <div class="stat risk">Churn Risk<strong>{{ customer.health.churn_risk }}</strong></div>
+                <div class="stat">Risk Label<strong>{{ customer.health.risk_label }}</strong></div>
+            </div>
+            {% else %}
+            <p>No health score calculated yet.</p>
+            {% endif %}
+        </section>
+
+        <div class="two-column">
+            <section id="riskReason" class="card">
+                <h2>Risk Explanation</h2>
+                <ul>
+                    {% for reason in risk_reasons %}
+                    <li>{{ reason }}</li>
+                    {% empty %}
+                    <li>No risk reasons found.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section id="recommendedActions" class="card">
+                <h2>Recommended Actions</h2>
+                <ul>
+                    {% for action in recommended_actions %}
+                    <li>{{ action }}</li>
+                    {% empty %}
+                    <li>No recommended actions found.</li>
+                    {% endfor %}
+                </ul>
+            </section>
         </div>
-        <div id="eventsOverTime">
-            <h2>Time distribution of events</h2>
-            <canvas id="timeChart"></canvas>
+
+        <section id="selectRange" class="card compact-card">
+            <h3>Time Range Selection</h3>
+
+            <form method="get">
+                <label for="range">Time range:</label>
+                <select name="range" id="range" onchange="this.form.submit()">
+                    <option value="7" {% if selected_range == "7" %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if selected_range == "30" %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if selected_range == "90" %}selected{% endif %}>Last 90 days</option>
+                    <option value="all" {% if selected_range == "all" %}selected{% endif %}>All time</option>
+                </select>
+            </form>
+        </section>
+
+        <div class="plots">
+            <section id="eventsChart" class="card chart-card">
+                <h2>Event Distribution</h2>
+                <div class="chart-wrapper">
+                    <canvas id="eventChart"></canvas>
+                </div>
+            </section>
+
+            <section id="eventsOverTime" class="card chart-card">
+                <h2>Time Distribution of Events</h2>
+                <div class="chart-wrapper">
+                    <canvas id="timeChart"></canvas>
+                </div>
+            </section>
         </div>
-    </div>
 
-    {{event_labels|json_script:"event-labels"}}
-    {{event_counts|json_script:"event-counts"}}
-    {{time_labels|json_script:"time-labels"}}
-    {{time_counts|json_script:"time-counts"}}
+        {{ event_labels|json_script:"event-labels" }}
+        {{ event_counts|json_script:"event-counts" }}
+        {{ time_labels|json_script:"time-labels" }}
+        {{ time_counts|json_script:"time-counts" }}
 
-    <div id="events">
-        <h2>Recent Events</h2>
-        <button id="toggleTableBtn">Show recent events table</button>
-        <table id="recentEventsTable" class="hidden" border="1">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Event type</th>
-                    <th>Timestamp</th>
-                    <th>Metadata</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in recent_events %}
-                <tr>
-                    <td>{{forloop.counter}}</td>
-                    <td>{{event.event_type}}</td>
-                    <td>{{event.timestamp}}</td>
-                    <td>{{event.metadata}}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4">No events found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% load static %}
+        <section id="events" class="card">
+            <div class="section-header">
+                <h2>Recent Events</h2>
+                <button id="toggleTableBtn" type="button">Show recent events table</button>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="recentEventsTable" class="hidden">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Event type</th>
+                            <th>Timestamp</th>
+                            <th>Metadata</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in recent_events %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ event.event_type }}</td>
+                            <td>{{ event.timestamp }}</td>
+                            <td>{{ event.metadata }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No events found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
     <script src="{% static 'analytics/js/customer_detail.js' %}"></script>
 </body>
 

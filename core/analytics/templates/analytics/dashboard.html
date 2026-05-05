@@ -12,6 +12,18 @@
 </head>
 
 <body>
+    <header class="dashboard-header">
+    <div class="header-content">
+        <div>
+            <h1>Customer Health Dashboard</h1>
+            <p class="subtitle">Monitor customer risk, engagement, and trends</p>
+        </div>
+
+        <div class="header-actions">
+            <span class="date">Updated: {% now "M d, Y" %}</span>
+        </div>
+    </div>
+</header>
 
     <div class="stats">
         <div class="card">Total Customers<br><strong>{{ total_customers }}</strong></div>
