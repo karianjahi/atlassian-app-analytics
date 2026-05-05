@@ -252,3 +252,19 @@ tbody tr:nth-child(even) {
         justify-content: space-between;
     }
 }
+
+.charts-header {
+    margin-bottom: 16px;
+}
+
+.charts-header h2 {
+    margin: 0;
+}
+
+.range-form select {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    font: inherit;
+}
