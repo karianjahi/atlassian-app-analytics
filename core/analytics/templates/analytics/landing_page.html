@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Atlassian App Analytics</title>
+    <link rel="stylesheet" href="{% static 'analytics/css/landing_page.css' %}">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<h1>Atlassian App Analytics</h1>
+
+<p>
+    This mini-project is a customer behaviour analytics prototype for
+    Atlassian Marketplace app vendors.
+</p>
+
+<div class="page-section">
+    <h2>Background</h2>
+    <p>
+        Atlassian Marketplace vendors build cloud apps that support teams using
+        Jira and Confluence. As these apps grow, product teams need better ways
+        to understand customer usage, adoption, reliability issues, and churn risk.
+    </p>
+</div>
+
+
+
+<div class="page-section">
+    <h2>Motivation</h2>
+    <p>
+        The goal of this project is to turn product usage events into practical
+        insights. Instead of only storing raw customer activity, the system
+        calculates customer health scores, highlights risk signals, and recommends
+        actions for product or support teams.
+    </p>
+</div>
+
+<div class="page-section">
+    <h2>Inspired by codefortynine</h2>
+    
+    <p>
+        codefortynine GmbH builds Atlassian cloud apps for Jira and Confluence.
+        Their app portfolio includes products such as Deep Clone for Jira,
+        External Data for Jira Fields, Quick Filters for Jira Dashboards,
+        Merge Agent for Jira, and Snipe-IT for Jira. Their tools focus on saving
+        time, improving workflows, connecting external data, and extending Jira
+        dashboards. 
+    </p>
+</div>
+
+<div class="page-section">
+
+</div>
+<h2>What this prototype does</h2>
+<ul>
+    <li>Tracks customer usage events</li>
+    <li>Calculates customer health scores</li>
+    <li>Detects churn-risk signals</li>
+    <li>Visualizes feature usage and activity over time</li>
+    <li>Suggests recommended actions for customer success</li>
+</ul>
+
+<div class="page-section">
+    <p>
+        <a class="button-link" href="{% url 'dashboard' %}">Go to Dashboard</a>
+    </p>
+</div>
+
+</body>
+</html>
