@@ -55,7 +55,9 @@ class CustomerHealth(models.Model):
         ("high_risk", "High Risk"),
     ]
     
-    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="health")
+    customer = models.OneToOneField(Customer, 
+                                    on_delete=models.CASCADE, 
+                                    related_name="health")
     usage_score = models.FloatField(default=0)
     feature_adoption_score = models.FloatField(default=0)
     reliability_score = models.FloatField(default=0)
