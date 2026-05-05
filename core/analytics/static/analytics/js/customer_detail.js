@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
             datasets: [{
                 label: "Number of Events",
                 data: window.eventData.counts,
-                backgroundColor: "#3498db"
+                backgroundColor: "#c2910a"
             }]
         },
         options: {
