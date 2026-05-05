@@ -1,13 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlassian App Analytics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{% static 'analytics/css/dashboard.css' %}"> 
+    <link rel="stylesheet" href="{% static 'analytics/css/dashboard.css' %}">
 </head>
+
 <body>
     <h1>Customer Health Dashboard</h1>
     <p>Total Customers: {{ total_customers}}</p>
@@ -15,18 +17,23 @@
     <p>Healthy: {{ healthy_count }}</p>
     <p>Watch: {{ watch_count }}</p>
     <p>High risk: {{ high_risk_count }}</p>
-    
+
     <h2>Health Distribution</h2>
     <div id="chartCanvas">
         <canvas id="mychart"></canvas>
     </div>
-    <script> // Django - Javascript bridge
+    <!-- <script> // Django - Javascript bridge
         window.healthData = {
             healthy: {{ healthy_count }},
             watch: {{ watch_count }},
             high_risk: {{ high_risk_count }}
         };
-    </script>
+    </script> -->
+    
+    {{ healthy_count|json_script:"healthy-count" }}
+    {{ watch_count|json_script:"watch-count" }}
+    {{ high_risk_count|json_script:"high-risk-count" }}
+
     <script src="{% static 'analytics/js/dashboard.js' %}"></script>
 
     <h2>Customer Health Records</h2>
@@ -49,7 +56,7 @@
                 <td>
                     <a href="{% url 'customer_detail' record.customer.id %}">
                         {{record.customer.company_name}}
-                    </a>  
+                    </a>
 
                 </td>
                 <td>{{record.customer.app_name}}</td>
@@ -65,4 +72,5 @@
         </tbody>
     </table>
 </body>
+
 </html>

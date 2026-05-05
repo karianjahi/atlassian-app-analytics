@@ -6,10 +6,14 @@ document.addEventListener("DOMContentLoaded", function() { // wait for html cont
         return;
     }
 
-    if (!window.healthData) {
-        console.error("healthData not found"); // error if no health data found
-        return;
-    }
+    // if (!window.healthData) {
+    //     console.error("healthData not found"); // error if no health data found
+    //     return;
+    // }
+
+    const healthy = JSON.parse(document.getElementById("healthy-count").textContent);
+    const watch = JSON.parse(document.getElementById("watch-count").textContent);
+    const highRisk = JSON.parse(document.getElementById("high-risk-count").textContent);
 
     new Chart(ctx, { // plot the chart
         type: "doughnut",
@@ -17,9 +21,10 @@ document.addEventListener("DOMContentLoaded", function() { // wait for html cont
             labels: ["Healthy", "Watch", "High Risk"],
             datasets: [{
                 data: [
-                    window.healthData.healthy,
-                    window.healthData.watch,
-                    window.healthData.high_risk
+                    // window.healthData.healthy,
+                    // window.healthData.watch,
+                    // window.healthData.high_risk
+                    healthy, watch, highRisk,
                 ],
                 backgroundColor: [
                     "#2ecc71",  // green
