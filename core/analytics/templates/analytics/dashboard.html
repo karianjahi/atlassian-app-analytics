@@ -28,7 +28,7 @@
         };
     </script>
     <script src="{% static 'analytics/js/dashboard.js' %}"></script>
-    
+
     <h2>Customer Health Records</h2>
     <table border="2">
         <thead>
@@ -45,7 +45,13 @@
             {% for record in health_records %}
             <tr>
                 <td>{{forloop.counter}}</td>
-                <td>{{record.customer.company_name}}</td>
+                <!-- <td>{{record.customer.company_name}}</td> -->
+                <td>
+                    <a href="{% url 'customer_detail' record.customer.id %}">
+                        {{record.customer.company_name}}
+                    </a>  
+
+                </td>
                 <td>{{record.customer.app_name}}</td>
                 <td>{{record.health_score}}</td>
                 <td>{{record.churn_risk}}</td>
