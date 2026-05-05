@@ -35,6 +35,14 @@
         <p>No health score calculated yet</p>
         {% endif %}
     </div>
+    <div id="riskReason">
+        <h2>Risk Explanation</h2>
+        <ul>
+            {% for reason in risk_reasons%}
+            <li>{{reason}}</li>
+            {% endfor %}
+        </ul>
+    </div>
     <div id="selectRange">
         <h3>Time Range Selection</h3>
         <form method="get">
