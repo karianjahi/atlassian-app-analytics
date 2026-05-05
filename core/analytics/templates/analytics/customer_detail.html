@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{customer.company_name}}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
     <a href="{% url 'dashboard' %}">Back to dashboard</a>
     <div id="customer_properties">
@@ -20,13 +22,13 @@
     <div id="customer_health">
         <h2>Customer Health</h2>
         {% if health %}
-            <p>Usage Score: {{customer.health.usage_score}}</p>
-            <p>Feature Adoption Score: {{customer.health.feature_adoption_score}}</p>
-            <p>Reliability Score: {{customer.health.reliability_score}}</p>
-            <p>Support Score: {{customer.health.support_score}}</p>
-            <p>Health Score: {{customer.health.health_score}}</p>
-            <p>Churn Risk: {{customer.health.churn_risk}}</p>
-            <p>Risk Label: {{customer.health.risk_label}}</p>
+        <p>Usage Score: {{customer.health.usage_score}}</p>
+        <p>Feature Adoption Score: {{customer.health.feature_adoption_score}}</p>
+        <p>Reliability Score: {{customer.health.reliability_score}}</p>
+        <p>Support Score: {{customer.health.support_score}}</p>
+        <p>Health Score: {{customer.health.health_score}}</p>
+        <p>Churn Risk: {{customer.health.churn_risk}}</p>
+        <p>Risk Label: {{customer.health.risk_label}}</p>
         {% else %}
         <p>No health score calculated yet</p>
         {% endif %}
@@ -35,13 +37,23 @@
     <div id="RecentEventsChart">
         <h2>Event Distribution</h2>
         <canvas id="eventChart"></canvas>
-        <script>
-            window.eventData = {
-                labels: {{event_labels|safe}},
-                counts: {{event_counts|safe}}
-            };
-        </script>
     </div>
+
+    <div id="eventsOverTime">
+        <canvas id="timeChart"></canvas>
+    </div>
+
+    <script>
+        window.eventData = {
+            labels: {{ event_labels | safe }},
+        counts: { { event_counts | safe } }
+            };
+        
+        window.timeData = {
+            labels: {{time_labels|safe}},
+            counts: {{time_counts|safe}}
+        };
+    </script>
 
     <div id="events">
         <h2>Recent Events</h2>
@@ -62,7 +74,7 @@
                     <td>{{event.timestamp}}</td>
                     <td>{{event.metadata}}</td>
                 </tr>
-                 {% empty %}
+                {% empty %}
                 <tr>
                     <td colspan="4">No events found</td>
                 </tr>
@@ -71,6 +83,7 @@
         </table>
     </div>
     {% load static %}
-<script src="{% static 'analytics/js/customer_detail.js' %}"></script>   
+    <script src="{% static 'analytics/js/customer_detail.js' %}"></script>
 </body>
+
 </html>
