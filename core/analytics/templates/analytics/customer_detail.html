@@ -47,7 +47,7 @@
                 <div class="stat">Support<strong>{{ customer.health.support_score }}</strong></div>
                 <div class="stat highlight">Health Score<strong>{{ customer.health.health_score }}</strong></div>
                 <div class="stat risk">Churn Risk<strong>{{ customer.health.churn_risk }}</strong></div>
-                <div class="stat">Risk Label<strong>{{ customer.health.risk_label }}</strong></div>
+                <div class="stat">Risk Label<strong>{{ customer.health.get_risk_label_display }}</strong></div>
             </div>
             {% else %}
             <p>No health score calculated yet.</p>
