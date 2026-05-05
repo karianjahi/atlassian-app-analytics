@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Count
+
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers
 
@@ -33,6 +35,16 @@ def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
     recent_events = customer.usage_events.all()[:20]
+    
+    event_distribution = (
+        customer.usage_events
+        .values("event_type")
+        .annotate(count=Count("id"))
+        .order_by("event_type")
+    )
+    event_labels = [item["event_type"] for item in event_distribution]
+    event_counts = [item["count"] for item in event_distribution]
+
     context = {
         "customer": customer,
         "health": health,
