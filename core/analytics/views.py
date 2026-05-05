@@ -7,6 +7,8 @@ from django.utils import timezone
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
 
+def landing_page(request):
+    return render(request, "analytics/landing_page.html")
 def dashboard(request):
     
     total_customers = Customer.objects.count()
