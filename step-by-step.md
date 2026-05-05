@@ -151,9 +151,33 @@ class Command(BaseCommand):
             - Link each customer row from dashboard table
             -  Display recent usage events
 
-    - Start by creating a customer_detail function in vies
+    - Start by creating a customer_detail function in views. The function extracts the customer from database, gets her health from inverse relationship with `CustomerHealth` (`related_name="health"`) and all usage events through the inverse relationship (`related_name="usage_events"`)
     - Then add a path for this view in `analytics.urls`
     - Create a customer_detail.html page 
+        - The page just displays customer data plus the table
+            - shows the customer properties, health and recent events
+    - To interact with the shell, run `python manage.py shell`
+        - to fake a request for the detail page, run;
+        ```python
+        from analytics.views import Customer
+        from django.test import RequestFactory
+        factory=RequestFactory()
+        customer=Customer.objects.first()
+        request = factory.get(f"/customer/{customer.id}")
+        response=customer_detail(request, customer.id)
+        print(response)
+        ```
+- Add functionality for creating a bar graph using a js file which is then imported as a static file
+- Add functionality to include a time series
+- Add chart styling and tooltips
+- Add functionality to select time ranges and create a drop-down menu for this
+
+- Add risk a explanation function in `services.py` and call it in views to display on web page
+- Same for recommended actions
+
+- To avoid making computations every time a request is made, we create a `update_customer_healthy.py` that runs manually for now (cron job later).
+
+- The rest of the work is mainly on making the UI better looking and also to add a landing page.
 
 
 
