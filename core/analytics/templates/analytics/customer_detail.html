@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{customer.company_name}}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'analytics/css/customer_detail.css' %}">
 </head>
 
 <body>
@@ -34,13 +36,14 @@
         {% endif %}
     </div>
 
-    <div id="eventsChart">
-        <h2>Event Distribution</h2>
-        <canvas id="eventChart"></canvas>
-    </div>
-
-    <div id="eventsOverTime">
-        <canvas id="timeChart"></canvas>
+    <div class="plots">        
+        <div id="eventsChart">
+            <h2>Event Distribution</h2>
+            <canvas id="eventChart"></canvas>
+        </div>
+        <div id="eventsOverTime">
+            <canvas id="timeChart"></canvas>
+        </div>
     </div>
 
     {{event_labels|json_script:"event-labels"}}
