@@ -49,3 +49,7 @@ th {
     gap: 2em;
     padding-bottom: 2em;
 }
+
+.hidden {
+    display: none !important;
+}

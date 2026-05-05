@@ -81,6 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
             }
-        })
+        });
+        
     }
+    const table = document.getElementById("recentEventsTable");
+    const btn = document.getElementById("toggleTableBtn");
+
+    btn.addEventListener("click", () => {
+        table.classList.toggle("hidden");
+        btn.textContent = table.classList.contains("hidden") ? "Show recent events table" : "Hide recent events table"
+    });
 });
