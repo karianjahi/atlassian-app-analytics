@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers
@@ -44,13 +45,26 @@ def customer_detail(request, customer_id):
     )
     event_labels = [item["event_type"] for item in event_distribution]
     event_counts = [item["count"] for item in event_distribution]
+    
+    events_over_time = (
+        customer.usage_events
+        .annotate(event_date=TruncDate("timestamp"))
+        .values("event_date")
+        .annotate(count=Count("id"))
+        .order_by("event_date")
+    )
+    
+    time_labels = [item["event_date"] for item in events_over_time]
+    time_counts = [item["count"] for item in events_over_time]
 
     context = {
         "customer": customer,
         "health": health,
         "recent_events": recent_events,
         "event_labels": event_labels,
-        "event_counts": event_counts
+        "event_counts": event_counts,
+        "time_labels": time_labels,
+        "time_counts": time_counts
     }
     return render(request, "analytics/customer_detail.html", context)
     
