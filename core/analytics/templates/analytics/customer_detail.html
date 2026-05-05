@@ -43,6 +43,15 @@
             {% endfor %}
         </ul>
     </div>
+    <div id="recommendedActions">
+        <h2>Recommended Actions</h2>
+        <ul>
+            {% for action in recommended_actions %}
+            <li>{{action}}</li>
+            {% endfor %}
+        </ul>
+
+    </div>
     <div id="selectRange">
         <h3>Time Range Selection</h3>
         <form method="get">
