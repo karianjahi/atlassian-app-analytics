@@ -37,7 +37,13 @@ def dashboard(request):
 def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     
+    # In case selection based on date/dates
     selected_range = request.GET.get("range", "30")
+    events = customer.usage_events.all()
+    if selected_range != "all":
+        days = int(selected_range)
+        start_date = timezone.now() - timedelta(days=days)
+        events = events.filter(timestamp__gte=start_date)
     
     health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
     recent_events = customer.usage_events.all()[:20]
@@ -69,7 +75,8 @@ def customer_detail(request, customer_id):
         "event_labels": event_labels,
         "event_counts": event_counts,
         "time_labels": time_labels,
-        "time_counts": time_counts
+        "time_counts": time_counts,
+        "selected_range": selected_range,
     }
     return render(request, "analytics/customer_detail.html", context)
     
