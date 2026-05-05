@@ -14,18 +14,36 @@ document.addEventListener("DOMContentLoaded", function () {
         if (eventChartInstance) {
             eventChartInstance.destroy(); // otherwise it plots on top in a loop
         }
-        eventChartInstance = new Chart(eventCanvas, {
+        eventChartInstance = new Chart(eventCanvas.getContext("2d"), {
             type: "bar",
             data: {
                 labels: eventLabels,
                 datasets: [{
                     label: "Number of Events",
-                    data: eventCounts
+                    data: eventCounts,
+                    backgroundColor: "#a88a1e",
+                    borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        enabled: true
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
             }
         });
     }
@@ -35,19 +53,33 @@ document.addEventListener("DOMContentLoaded", function () {
         if (timeChartInstance) {
             timeChartInstance.destroy();
         }
-        timeChartInstance = new Chart(timeCanvas, {
+        timeChartInstance = new Chart(timeCanvas.getContext("2d"), {
             type: "line",
             data: {
                 labels: timeLabels,
                 datasets: [{
                     label: "Events Over Time",
                     data: timeCounts,
-                    tension: 0.3
+                    tension: 0.3,
+                    fill: false
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        enabled: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
             }
         })
     }
