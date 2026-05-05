@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from datetime import timedelta
+from django.utils import timezone
 
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers
@@ -34,6 +36,9 @@ def dashboard(request):
 
 def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
+    
+    selected_range = request.GET.get("range", "30")
+    
     health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
     recent_events = customer.usage_events.all()[:20]
     
