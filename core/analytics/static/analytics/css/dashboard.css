@@ -268,3 +268,21 @@ tbody tr:nth-child(even) {
     background: #ffffff;
     font: inherit;
 }
+
+.app-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.app-header-content {
+    width: min(1100px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 12px 0;
+}
+
+.brand {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b7280;
+    letter-spacing: 0.02em;
+}
