@@ -90,4 +90,30 @@ def calculate_customer_health_for_all_customers():
         results.append(customer_health)
     return results
         
-          
+
+def generate_risk_reasons(customer:Customer):
+    health = getattr(customer, "health", None)
+    
+    if not health:
+        return ["No health score has been calculated yet."]
+    
+    reasons = []
+    
+    if health.usage_score < 50:
+        reasons.append("Low recent product usage")
+    
+    if health.feature_adoption_score < 50:
+        reasons.append("Limited feature adoption")
+    
+    if health.reliability_score < 70:
+        reasons.append("High number of failed or error events")
+    
+    if health.support_score < 70:
+        reasons.append("High support activity")
+        
+    if health.churn_risk >= 50:
+        reasons.append("Overall churn risk is elevated")
+    
+    if not reasons:
+        reasons.append("Customer appears healthy based on current signals")
+    return reasons
