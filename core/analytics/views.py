@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from .models import Customer, CustomerHealth
-from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons
+from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
 
 def dashboard(request):
     calculate_customer_health_for_all_customers()
@@ -69,6 +69,8 @@ def customer_detail(request, customer_id):
     time_counts = [item["count"] for item in events_over_time]
     
     risk_reasons = generate_risk_reasons(customer)
+    recommended_actions = generate_recommended_actions(customer)
+    
     context = {
         "customer": customer,
         "health": health,
@@ -79,6 +81,7 @@ def customer_detail(request, customer_id):
         "time_counts": time_counts,
         "selected_range": selected_range,
         "risk_reasons": risk_reasons,
+        "recommended_actions": recommended_actions,
     }
     return render(request, "analytics/customer_detail.html", context)
     
