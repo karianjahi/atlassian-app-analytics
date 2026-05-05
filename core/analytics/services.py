@@ -117,3 +117,30 @@ def generate_risk_reasons(customer:Customer):
     if not reasons:
         reasons.append("Customer appears healthy based on current signals")
     return reasons
+
+def generate_recommended_actions(customer: Customer):
+    health = getattr(customer, "health", None)
+    if not health: 
+        return ["Calculate customer health before recommending actions."]
+    
+    actions = []
+    
+    if health.usage_score < 50:
+        actions.append("Send onboarding or re-engagement email.")
+
+    if health.feature_adoption_score < 50:
+        actions.append("Suggest a short feature walkthrough or documentation.")
+
+    if health.reliability_score < 70:
+        actions.append("Investigate recent failed events and technical errors.")
+
+    if health.support_score < 70:
+        actions.append("Review open support tickets and follow up proactively.")
+
+    if health.churn_risk >= 50:
+        actions.append("Schedule a customer check-in before renewal.")
+
+    if not actions:
+        actions.append("No immediate action needed. Continue monitoring.")
+
+    return actions
