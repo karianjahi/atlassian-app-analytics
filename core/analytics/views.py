@@ -48,7 +48,9 @@ def customer_detail(request, customer_id):
     context = {
         "customer": customer,
         "health": health,
-        "recent_events": recent_events
+        "recent_events": recent_events,
+        event_labels: event_labels,
+        event_counts: event_counts
     }
     return render(request, "analytics/customer_detail.html", context)
     
