@@ -46,10 +46,10 @@ def customer_detail(request, customer_id):
         events = events.filter(timestamp__gte=start_date)
     
     health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
-    recent_events = customer.usage_events.all()[:20]
+    recent_events = events[:20]
     
     event_distribution = (
-        customer.usage_events
+        events
         .values("event_type")
         .annotate(count=Count("id"))
         .order_by("event_type")
@@ -58,7 +58,7 @@ def customer_detail(request, customer_id):
     event_counts = [item["count"] for item in event_distribution]
     
     events_over_time = (
-        customer.usage_events
+        events
         .annotate(event_date=TruncDate("timestamp"))
         .values("event_date")
         .annotate(count=Count("id"))
