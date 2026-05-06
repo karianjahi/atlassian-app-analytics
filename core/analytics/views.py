@@ -157,7 +157,7 @@ def summary_api(request):
     
     healthy = CustomerHealth.objects.filter(risk_label="healthy").count()
     watch = CustomerHealth.objects.filter(risk_label="watch").count()
-    high_risk = Customer.objects.filter(risk_label="high_risk").count()
+    high_risk = CustomerHealth.objects.filter(risk_label="high_risk").count()
     
     data = {
         "total_customers": total_customers,
