@@ -91,10 +91,17 @@ def customer_detail(request, customer_id):
     }
     return render(request, "analytics/customer_detail.html", context)
     
+"""
+API Endpoints
+"""
+
 @api_view(["GET"])
 def customer_list_api(request):
     "Get request → fetch customers → serialize → return JSON"
-    customers = Customer.objects.all()
+    country = request.GET.get("country")
+    if country:
+        customers = Customer.objects.filter(country=country)
+    # customers = Customer.objects.all()
     serializer = CustomerSerializer(customers, many=True)
     return Response(serializer.data)
 
