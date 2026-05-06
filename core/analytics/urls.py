@@ -13,6 +13,6 @@ urlpatterns = [
     path("api/customers/<int:customer_id>/health/", views.customer_health_api),
     path("api/customers/<int:customer_id>/events/", views.customer_events_api),
     path("api/customer-health/", views.customer_health_list_api),
-    path("api/summary"),
+    path("api/summary", views.summary_api),
 ]
 
