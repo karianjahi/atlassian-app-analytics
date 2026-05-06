@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Count
+from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
 from datetime import timedelta
 from django.utils import timezone
@@ -146,3 +146,25 @@ def customer_health_list_api(request):
         
     serializer = CustomerHealthSerializer(health_records, many=True)
     return Response(serializer.data)
+
+@api_view(["GET"])
+def summary_api(request):
+    total_customers = Customer.objects.count()
+    
+    avg_health = CustomerHealth.objects.aggregate(
+        Avg("health_score")
+    )["health_score__avg"] or 0
+    
+    healthy = CustomerHealth.objects.filter(risk_label="healthy").count()
+    watch = CustomerHealth.objects.filter(risk_label="watch").count()
+    high_risk = Customer.objects.filter(risk_label="high_risk").count()
+    
+    data = {
+        "total_customers": total_customers,
+        "average_health_score": round(avg_health, 1),
+        "healthy": healthy,
+        "watch": watch,
+        "high_risk": high_risk,
+    }
+    
+    return Response(data)
