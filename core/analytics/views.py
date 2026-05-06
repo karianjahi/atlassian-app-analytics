@@ -168,3 +168,34 @@ def summary_api(request):
     }
     
     return Response(data)
+
+
+@api_view(["GET"])
+def dashboard_data_api(request):
+    health_records = CustomerHealth.objects.select_related("customer").all()
+    
+    data = {
+        "summary": {
+            "total_customers": Customer.objects.count(),
+            "healthy": health_records.filter(risk_label="healthy").count(),
+            "watch": health_records.filter(risk_label="watch").count(),
+            "high_risk": health_records.filter(risk_label="high_risk").count(),
+            "average_health_score": round(
+                health_records.aggregate(Avg("health_score"))["health_score__avg"] or 0
+                ,2
+            ),
+        },
+        "customers": [
+            {
+                "id": record.customer.id,
+                "company_name": record.customer.company_name,
+                "app_name": record.customer.app_name,
+                "health_score": record.health_score,
+                "churn_risk": record.churn_risk,
+                "risk_label": record.get_risk_label_display(),
+            }
+            for record in health_records
+        ],
+    }
+    
+    return Response(data)
