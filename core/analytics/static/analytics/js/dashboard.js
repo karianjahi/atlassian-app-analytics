@@ -11,49 +11,57 @@ document.addEventListener("DOMContentLoaded", function() { // wait for html cont
     //     return;
     // }
 
-    const healthy = JSON.parse(document.getElementById("healthy-count").textContent);
-    const watch = JSON.parse(document.getElementById("watch-count").textContent);
-    const highRisk = JSON.parse(document.getElementById("high-risk-count").textContent);
+    // const healthy = JSON.parse(document.getElementById("healthy-count").textContent);
+    // const watch = JSON.parse(document.getElementById("watch-count").textContent);
+    // const highRisk = JSON.parse(document.getElementById("high-risk-count").textContent);
 
-    new Chart(ctx, { // plot the chart
-        type: "doughnut",
-        data: {
-            labels: ["Healthy", "Watch", "High Risk"],
-            datasets: [{
-                data: [
-                    // window.healthData.healthy,
-                    // window.healthData.watch,
-                    // window.healthData.high_risk
-                    healthy, watch, highRisk,
-                ],
-                backgroundColor: [
-                    "#2ecc71",  // green
-                    "#f1c40f",  // yellow
-                    "#e74c3c"   // red
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const value = context.raw;
+    fetch("/api/summary/")
+        .then(response => response.json())
+        .then(data => {
 
-                            // compute total from dataset
-                            const data = context.dataset.data;
-                            const total = data.reduce((sum, val) => sum + val, 0);
+            const healthy = data.healthy;
+            const watch = data.watch;
+            const highRisk = data.high_risk;
 
-                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                            return `${context.label}: ${value} (${percentage}%)`;
+            new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Healthy", "Watch", "High Risk"],
+                    datasets: [{
+                        data: [healthy, watch, highRisk],
+                        backgroundColor: [
+                            "#2ecc71",
+                            "#f1c40f",
+                            "#e74c3c"
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const data = context.dataset.data;
+                                    const total = data.reduce((sum, val) => sum + val, 0);
 
+                                    const percentage = total > 0
+                                        ? ((value / total) * 100).toFixed(1)
+                                        : 0;
+
+                                    return `${context.label}: ${value} (${percentage}%)`;
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-    });
+            });
+
+        })
+        .catch(error => {
+            console.error("Error loading summary data:", error);
+        });
 });
