@@ -12,7 +12,6 @@ from analytics.services import calculate_customer_health_for_all_customers, gene
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CustomerSerializer, CustomerHealthSerializer, UsageEventSerializer
-from rest_framework.pagination import PageNumberPagination
 
 def landing_page(request):
     return render(request, "analytics/landing_page.html")
@@ -97,14 +96,10 @@ def customer_detail(request, customer_id):
 API Endpoints
 """
 
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = "page_size"
-    max_page_size = 100
-
 @api_view(["GET"])
 def customer_list_api(request):
     "Get request → fetch customers → serialize → return JSON"
+    customers = Customer.objects.all()
     country = request.GET.get("country")
     if country:
         customers = Customer.objects.filter(country__iexact=country)
