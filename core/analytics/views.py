@@ -4,13 +4,15 @@ from django.db.models.functions import TruncDate
 from datetime import timedelta
 from django.utils import timezone
 
+
+from .models import Customer, CustomerHealth
+from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
+
 # for api
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import CustomerSerializer, CustomerHealthSerializer, UsageEventSerializer
-
-from .models import Customer, CustomerHealth
-from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
+from rest_framework.pagination import PageNumberPagination
 
 def landing_page(request):
     return render(request, "analytics/landing_page.html")
@@ -95,6 +97,11 @@ def customer_detail(request, customer_id):
 API Endpoints
 """
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
 @api_view(["GET"])
 def customer_list_api(request):
     "Get request → fetch customers → serialize → return JSON"
@@ -141,5 +148,6 @@ def customer_health_list_api(request):
     ordering = request.GET.get("ordering")
     if ordering:
         health_records = health_records.order_by(ordering)
+        
     serializer = CustomerHealthSerializer(health_records, many=True)
     return Response(serializer.data)
