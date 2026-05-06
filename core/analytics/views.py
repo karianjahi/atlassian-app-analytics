@@ -100,8 +100,7 @@ def customer_list_api(request):
     "Get request → fetch customers → serialize → return JSON"
     country = request.GET.get("country")
     if country:
-        customers = Customer.objects.filter(country=country)
-    # customers = Customer.objects.all()
+        customers = Customer.objects.filter(country__iexact=country)
     serializer = CustomerSerializer(customers, many=True)
     return Response(serializer.data)
 
