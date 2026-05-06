@@ -7,7 +7,7 @@ from django.utils import timezone
 # for api
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import CustomerSerializer, CustomerHealthSerializer
+from .serializers import CustomerSerializer, CustomerHealthSerializer, UsageEventSerializer
 
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
@@ -113,4 +113,11 @@ def customer_health_api(request, customer_id):
         return Response({"detail": "No health data found"}, status=404)
     
     serializer = CustomerHealthSerializer(health)
-    return Response(serializer.data)    
+    return Response(serializer.data)   
+
+@api_view(["GET"])
+def customer_events_api(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    events = customer.usage_events.all()    
+    serializer = UsageEventSerializer(events, many=True)
+    return Response(serializer.data)
