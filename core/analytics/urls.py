@@ -14,5 +14,6 @@ urlpatterns = [
     path("api/customers/<int:customer_id>/events/", views.customer_events_api),
     path("api/customer-health/", views.customer_health_list_api),
     path("api/summary", views.summary_api),
+    path("api/dashboard/", views.dashboard_data_api)
 ]
 
