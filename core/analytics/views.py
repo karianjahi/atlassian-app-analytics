@@ -97,3 +97,9 @@ def customer_list_api(request):
     customers = Customer.objects.all()
     serializer = CustomerSerializer(customers, many=True)
     return Response(serializer.data)
+
+@api_view(["Get"])
+def customer_detail_api(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    serializer = CustomerSerializer(customer)
+    return Response(serializer.data)
