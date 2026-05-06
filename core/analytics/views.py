@@ -132,7 +132,14 @@ def customer_events_api(request, customer_id):
 def customer_health_list_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
     risk_label = request.GET.get("risk_label") # captures the term 'risk_label' from the incoming request
+    
+    # filtering by risk
     if risk_label:
         health_records = health_records.filter(risk_label=risk_label)
+        
+    # ordering
+    ordering = request.GET.get("ordering")
+    if ordering:
+        health_records = health_records.order_by(ordering)
     serializer = CustomerHealthSerializer(health_records, many=True)
     return Response(serializer.data)
