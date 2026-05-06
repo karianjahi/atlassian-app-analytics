@@ -4,6 +4,11 @@ from django.db.models.functions import TruncDate
 from datetime import timedelta
 from django.utils import timezone
 
+# for api
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import CustomerSerializer
+
 from .models import Customer, CustomerHealth
 from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
 
@@ -86,3 +91,9 @@ def customer_detail(request, customer_id):
     }
     return render(request, "analytics/customer_detail.html", context)
     
+@api_view(["GET"])
+def customer_list_api(request):
+    "Get request → fetch customers → serialize → return JSON"
+    customers = Customer.objects.all()
+    serializer = CustomerSerializer(customers, many=True)
+    return Response(serializer.data)
