@@ -121,3 +121,9 @@ def customer_events_api(request, customer_id):
     events = customer.usage_events.all()    
     serializer = UsageEventSerializer(events, many=True)
     return Response(serializer.data)
+
+@api_view(["GET"])
+def customer_health_list_api(request):
+    health_records = CustomerHealth.objects.select_related("customer").all()
+    serializer = CustomerHealthSerializer(health_records, many=True)
+    return Response(serializer.data)
