@@ -17,7 +17,7 @@ from .serializers import (
     UsageEventSerializer,
 )
 
-from analytics.ml import train_churn_model
+from analytics.ml import train_churn_model, get_model_feature_importance
 
 
 def landing_page(request):
@@ -177,7 +177,7 @@ def customer_detail_data_api(request, customer_id):
             "app_name": customer.app_name,
             "installed_at": customer.installed_at,
         },
-        "health": 
+        "health": (
             None
             if not health
             else {
@@ -189,38 +189,56 @@ def customer_detail_data_api(request, customer_id):
                 "churn_risk": health.churn_risk,
                 "ml_churn_probability": health.ml_churn_probability,
                 "risk_label": health.get_risk_label_display(),
-            },
-            "events": [
-                {
-                    "event_type": event.event_type,
-                    "timestamp": event.timestamp,
-                    "metadata": event.metadata,
-                }
-                for event in events[:20]
+            }
+        ),
+        "events": [
+            {
+                "event_type": event.event_type,
+                "timestamp": event.timestamp,
+                "metadata": event.metadata,
+            }
+            for event in events[:20]
+        ],
+        "event_distribution": {
+            "labels": [item["event_type"] for item in event_distribution],
+            "counts": [item["count"] for item in event_distribution],
+        },
+        "events_over_time": {
+            "labels": [
+                item["event_date"].strftime("%Y-%m-%d") for item in events_over_time
             ],
-            "event_distribution": {
-                "labels": [item["event_type"] for item in event_distribution],
-                "counts": [item["count"] for item in event_distribution]
-            },
-            "events_over_time": {
-                "labels": [item["event_date"].strftime("%Y-%m-%d") for item in events_over_time],
-                "counts": [item["count"] for item in events_over_time]
-            },
-            "risk_reasons": generate_risk_reasons(customer),
-            "recommended_actions":generate_recommended_actions(customer),
-        
+            "counts": [item["count"] for item in events_over_time],
+        },
+        "risk_reasons": generate_risk_reasons(customer),
+        "recommended_actions": generate_recommended_actions(customer),
     }
     return Response(data)
+
 
 # accuracy
 @api_view(["GET"])
 def ml_model_metrics_api(request):
     result = train_churn_model()
-    
+
     if result is None:
         return Response({"detail": "Not enough data to train model"}, status=400)
+    return Response({"accuracy": result["accuracy"]})
+
+
+# feature importance
+@api_view(["GET"])
+def ml_feature_importance_api(request):
+    importance = get_model_feature_importance()
+    if importance is None:
+        return Response(
+            {
+                "detail": "Not enough data to train model",
+            },
+            status=400
+        )
     return Response(
         {
-            "accuracy": result["accuracy"]
+            "feature_importance": importance
         }
     )
+    pass
