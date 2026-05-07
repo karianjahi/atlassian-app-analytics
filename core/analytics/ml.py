@@ -81,11 +81,15 @@ def load_trained_model():
 
 # make predictions
 def predict_churn_probability(customer_health: CustomerHealth):
-    result = train_churn_model()
-    model = result["model"]
-
+    model = load_trained_model()
+    
     if model is None:
-        return None
+        result = train_churn_model()
+
+        if result is None:
+            return None
+
+        model = result["model"]
 
     features = [
         [
