@@ -9,15 +9,15 @@ document.addEventListener("DOMContentLoaded", function () {
     rangeSelect.addEventListener("change", function() {
         loadCustomerDetail(customerId, rangeSelect.value)
     });
-    
+
     setupTableToggle();
 });
 
-function loadCustomerDetail(customerId) {
+function loadCustomerDetail(customerId, selectedRange) {
     const loadingMessage = document.getElementById("loading-message");
     const errorMessage = document.getElementById("error-message");
     const pageContent = document.getElementById("page-content");
-    fetch(`/api/customers/${customerId}/detail/`)
+    fetch(`/api/customers/${customerId}/detail/?range=${selectedRange}`)
         .then(response => response.json())
         .then(data => {
             loadingMessage.classList.add("hidden");
