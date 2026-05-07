@@ -285,7 +285,8 @@ Show in dashboard
 - At this stage, the ML system is no longer just predicting but it can also explain its predictions
 - Expose feature importance API to the frontend - dashboard
 - Save the model on disk by first installing `joblib` and defining the path
-- Add model loader
+- Add model loader and create logic for using pretrained model or train it if it doesn't exist
+
 
 
 
