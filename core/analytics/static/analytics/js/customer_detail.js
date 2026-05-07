@@ -3,7 +3,13 @@ let timeChartInstance = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     const customerId = window.location.pathname.split("/")[2];
-    loadCustomerDetail(customerId);
+    const rangeSelect = document.getElementById("range");
+    loadCustomerDetail(customerId, rangeSelect.value);
+
+    rangeSelect.addEventListener("change", function() {
+        loadCustomerDetail(customerId, rangeSelect.value)
+    });
+    
     setupTableToggle();
 });
 
