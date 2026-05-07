@@ -138,6 +138,7 @@ def dashboard_data_api(request):
                 "app_name": record.customer.app_name,
                 "health_score": record.health_score,
                 "churn_risk": record.churn_risk,
+                "ml_churn_probability": record.ml_churn_probability,
                 "risk_label": record.get_risk_label_display(),
             }
             for record in health_records
@@ -184,6 +185,7 @@ def customer_detail_data_api(request, customer_id):
                 "support_score": health.support_score,
                 "health_score": health.health_score,
                 "churn_risk": health.churn_risk,
+                "ml_churn_probability": health.ml_churn_probability,
                 "risk_label": health.get_risk_label_display(),
             },
             "events": [
