@@ -1,9 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
-from datetime import timedelta
-from django.utils import timezone
-
 
 from .models import Customer, CustomerHealth
 from analytics.services import (
