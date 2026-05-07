@@ -66,7 +66,8 @@ def train_churn_model():
 
 
 def predict_churn_probability(customer_health:CustomerHealth):
-    model = train_churn_model()
+    result = train_churn_model()
+    model = result["model"]
 
     if model is None:
         return None
