@@ -66,6 +66,7 @@ class CustomerHealth(models.Model):
     churn_risk = models.FloatField(default=0)
     risk_label = models.CharField(max_length=20, choices=RISK_LABEL_CHOICES, default="watch")
     calculated_at = models.DateTimeField(auto_now=True)
+    did_churn = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["-health_score"]
