@@ -20,7 +20,13 @@
     </header>
 
     <main class="page">
+        <div id="loading-message">
+            Loading customer data...
+        </div>
 
+        <div id="error-message" class="hidden">
+            Failed to load customer data.
+        </div>
         <a class="back-link" href="{% url 'dashboard' %}">← Back to dashboard</a>
 
         <section id="customer_properties" class="card hero-card">
