@@ -49,7 +49,7 @@ def train_churn_model():
     return model
 
 
-def predict_churn_probability(customer_health):
+def predict_churn_probability(customer_health:CustomerHealth):
     model = train_churn_model()
 
     if model is None:
@@ -75,3 +75,14 @@ def update_ml_churn_probability(customer_health):
     customer_health.ml_churn_probability = probability
     customer_health.save(update_fields=["ml_churn_probability"])
     return probability
+
+def update_all_ml_churn_probabilities():
+    records = CustomerHealth.objects.select_related("customer").all()
+    updated = 0
+    for record in records:
+        probability = predict_churn_probability(record)
+        if probability is not None:
+            record.ml_churn_probability = probability
+            record.save(update_fields=["ml_churn_probability"])
+            updated += 1
+    return updated
