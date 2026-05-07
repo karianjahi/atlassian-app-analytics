@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${customer.app_name}</td>
                     <td>${customer.health_score}</td>
                     <td>${customer.churn_risk}</td>
+                    <td>${customer.ml_churn_probability}</td>
                     <td>${customer.risk_label}</td>
                 `;
 

@@ -59,6 +59,7 @@ function renderHealth(health) {
     document.getElementById("support-score").textContent = health.support_score;
     document.getElementById("health-score").textContent = health.health_score;
     document.getElementById("churn-risk").textContent = health.churn_risk;
+    document.getElementById("ml-churn-probability").textContent = health.ml_churn_probability;
     document.getElementById("risk-label").textContent = health.risk_label;
 }
 
