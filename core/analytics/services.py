@@ -60,6 +60,9 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
         risk_label = "watch"
     else:
         risk_label = "high_risk"
+    
+    # Determine the churn label
+    did_churn = health_score < 40
         
     # What is the churn risk for this customer
     churn_risk = 100 - health_score # higher churn risk for low customer health
@@ -75,6 +78,7 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
             "health_score": round(health_score, 2),
             "churn_risk": round(churn_risk, 2),
             "risk_label": risk_label,
+            "did_churn": did_churn,
         }
     )
     return customer_health
