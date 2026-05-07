@@ -72,7 +72,14 @@ def train_churn_model():
         "accuracy": round(accuracy * 100, 2),
     }
 
+# load pretrained model if exists
+def load_trained_model():
+    if not MODEL_PATH.exists():
+        return None
+    return joblib.load(MODEL_PATH)
 
+
+# make predictions
 def predict_churn_probability(customer_health: CustomerHealth):
     result = train_churn_model()
     model = result["model"]
