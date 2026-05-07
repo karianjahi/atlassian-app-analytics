@@ -26,18 +26,44 @@ def build_training_dataframe():
 
     return pd.DataFrame(data)
 
+
 def train_churn_model():
     df = build_training_dataframe()
-    
-    if df.empty: 
+
+    if df.empty:
         return None
-    
+
     # Create features (X) and target (y)
-    X = df[["usage_score", "feature_adoption_score", "reliability_score", "support_score", "support_score", "company_size"]]
-    print(X)
+    X = df[
+        [
+            "usage_score",
+            "feature_adoption_score",
+            "reliability_score",
+            "support_score",
+            "company_size",
+        ]
+    ]
     y = df["did_churn"]
     model = LogisticRegression(max_iter=1000)
     model.fit(X, y)
     return model
 
+
+def predict_churn_probability(customer_health):
+    model = train_churn_model()
+
+    if model is None:
+        return None
+
+    features = [
+        [
+            customer_health.usage_score,
+            customer_health.feature_adoption_score,
+            customer_health.reliability_score,
+            customer_health.support_score,
+            customer_health.customer.company_size,
+        ]
+    ]
     
+    probability = model.predict_proba(features)[0][1] # [first customer][churn probability]
+    return round(probability * 100, 2)
