@@ -17,6 +17,8 @@ from .serializers import (
     UsageEventSerializer,
 )
 
+from analytics.ml import train_churn_model
+
 
 def landing_page(request):
     return render(request, "analytics/landing_page.html")
@@ -210,3 +212,15 @@ def customer_detail_data_api(request, customer_id):
     }
     return Response(data)
 
+# accuracy
+@api_view(["GET"])
+def ml_model_metrics_api(request):
+    result = train_churn_model()
+    
+    if result is None:
+        return Response({"detail": "Not enough data to train model"}, status=400)
+    return Response(
+        {
+            "accuracy": result["accuracy"]
+        }
+    )
