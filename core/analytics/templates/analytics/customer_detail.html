@@ -5,88 +5,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ customer.company_name }}</title>
+    <title id="page-title">Customer Detail</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{% static 'analytics/css/customer_detail.css' %}">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <header class="app-header">
         <div class="app-header-content">
-            <a href="{% url 'dashboard' %}" class="brand">
-                <!-- Dr. Joseph Njeri -->
-            </a>
+            <a href="{% url 'dashboard' %}" class="brand"></a>
         </div>
     </header>
+
     <main class="page">
 
         <a class="back-link" href="{% url 'dashboard' %}">← Back to dashboard</a>
 
         <section id="customer_properties" class="card hero-card">
-            <h1>{{ customer.company_name }}</h1>
+            <h1 id="company-name">Loading...</h1>
 
             <div class="details-grid">
-                <p><span>App</span>{{ customer.app_name }}</p>
-                <p><span>Country</span>{{ customer.country }}</p>
-                <p><span>Company size</span>{{ customer.company_size }}</p>
-                <p><span>License</span>{{ customer.get_license_tier_display }}</p>
-                <p><span>Installation date</span>{{ customer.installed_at }}</p>
+                <p><span>App</span><strong id="app-name"></strong></p>
+                <p><span>Country</span><strong id="country"></strong></p>
+                <p><span>Company size</span><strong id="company-size"></strong></p>
+                <p><span>License</span><strong id="license-tier"></strong></p>
+                <p><span>Installation date</span><strong id="installed-at"></strong></p>
             </div>
         </section>
 
         <section id="customer_health" class="card">
             <h2>Customer Health</h2>
 
-            {% if health %}
-            <div class="stats-grid">
-                <div class="stat">Usage Score<strong>{{ customer.health.usage_score }}</strong></div>
-                <div class="stat">Feature Adoption<strong>{{ customer.health.feature_adoption_score }}</strong></div>
-                <div class="stat">Reliability<strong>{{ customer.health.reliability_score }}</strong></div>
-                <div class="stat">Support<strong>{{ customer.health.support_score }}</strong></div>
-                <div class="stat highlight">Health Score<strong>{{ customer.health.health_score }}</strong></div>
-                <div class="stat risk">Churn Risk<strong>{{ customer.health.churn_risk }}</strong></div>
-                <div class="stat">Risk Label<strong>{{ customer.health.get_risk_label_display }}</strong></div>
+            <div class="stats-grid" id="health-stats">
+                <div class="stat">Usage Score<strong id="usage-score"></strong></div>
+                <div class="stat">Feature Adoption<strong id="feature-adoption-score"></strong></div>
+                <div class="stat">Reliability<strong id="reliability-score"></strong></div>
+                <div class="stat">Support<strong id="support-score"></strong></div>
+                <div class="stat highlight">Health Score<strong id="health-score"></strong></div>
+                <div class="stat risk">Churn Risk<strong id="churn-risk"></strong></div>
+                <div class="stat">Risk Label<strong id="risk-label"></strong></div>
             </div>
-            {% else %}
-            <p>No health score calculated yet.</p>
-            {% endif %}
+
+            <p id="no-health-message" class="hidden">No health score calculated yet.</p>
         </section>
 
         <div class="two-column">
             <section id="riskReason" class="card">
                 <h2>Risk Explanation</h2>
-                <ul>
-                    {% for reason in risk_reasons %}
-                    <li>{{ reason }}</li>
-                    {% empty %}
-                    <li>No risk reasons found.</li>
-                    {% endfor %}
-                </ul>
+                <ul id="risk-reasons-list"></ul>
             </section>
 
             <section id="recommendedActions" class="card">
                 <h2>Recommended Actions</h2>
-                <ul>
-                    {% for action in recommended_actions %}
-                    <li>{{ action }}</li>
-                    {% empty %}
-                    <li>No recommended actions found.</li>
-                    {% endfor %}
-                </ul>
+                <ul id="recommended-actions-list"></ul>
             </section>
         </div>
 
         <div class="section-header charts-header">
             <h2>Event Analytics</h2>
 
-            <form method="get" class="range-form">
-                <select name="range" id="range" onchange="this.form.submit()">
-                    <option value="7" {% if selected_range == "7" %}selected{% endif %}>Last 7 days</option>
-                    <option value="30" {% if selected_range == "30" %}selected{% endif %}>Last 30 days</option>
-                    <option value="90" {% if selected_range == "90" %}selected{% endif %}>Last 90 days</option>
-                    <option value="all" {% if selected_range == "all" %}selected{% endif %}>All time</option>
+            <form class="range-form">
+                <select name="range" id="range">
+                    <option value="7">Last 7 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                    <option value="all">All time</option>
                 </select>
             </form>
         </div>
@@ -106,10 +91,6 @@
                 </div>
             </section>
         </div>
-        {{ event_labels|json_script:"event-labels" }}
-        {{ event_counts|json_script:"event-counts" }}
-        {{ time_labels|json_script:"time-labels" }}
-        {{ time_counts|json_script:"time-counts" }}
 
         <section id="events" class="card">
             <div class="section-header">
@@ -127,20 +108,7 @@
                             <th>Metadata</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for event in recent_events %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ event.event_type }}</td>
-                            <td>{{ event.timestamp }}</td>
-                            <td>{{ event.metadata }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="4">No events found</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                    <tbody id="events-table-body"></tbody>
                 </table>
             </div>
         </section>
@@ -149,6 +117,7 @@
 
     <script src="{% static 'analytics/js/customer_detail.js' %}"></script>
 </body>
+
 <footer class="app-footer">
     <p>© {% now "Y" %} Dr. Joseph Njeri. All rights reserved.</p>
 </footer>
