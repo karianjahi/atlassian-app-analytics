@@ -87,6 +87,14 @@ document.addEventListener("DOMContentLoaded", function () {
             tableBody.innerHTML = "";
 
             data.feature_importance.forEach(item => {
+                const featureLabels = {
+                    usage_score: "Usage Score",
+                    feature_adoption_score: "Feature Adoption Score",
+                    reliability_score: "Reliability Score",
+                    support_score: "Support Score",
+                    company_size: "Company Size"
+                };
+
                 const row = document.createElement("tr");
 
                 const interpretation = item.coefficient > 0
@@ -94,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "Decreases churn risk";
 
                 row.innerHTML = `
-                <td>${item.feature}</td>
+                <td>${featureLabels[item.feature] || item.feature}</td>
                 <td>${item.coefficient}</td>
                 <td>${interpretation}</td>
             `;
