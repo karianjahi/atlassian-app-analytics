@@ -1,11 +1,15 @@
-import pandas as pd
+import joblib
+from pathlib import Path
 
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 from .models import CustomerHealth
 
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "churn_model.joblib"
 
 def build_training_dataframe():
     records = CustomerHealth.objects.select_related("customer").all()
