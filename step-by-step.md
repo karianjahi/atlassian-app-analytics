@@ -274,6 +274,11 @@ Show in dashboard
 
 - Once we calculate the churn probability, we must add it to the database. Functions for this in `ml.py`
 - Next step is to add the `ml_churn_probability` in the API and frontend
+- We then create `update_ml_churn.py` that stays in the `analytics/management/commands/` to update the ml churns outside of the app maybe through a cron job.
+- We shall update the app from the file `update_analytics.sh` which has the customer health and ml churn files 
+- Next is to modifty the train churn model so that we include evaluation i.e. `train-test-split` and calculate `accuracy`.
+
+
 
 
 
