@@ -65,7 +65,7 @@ def train_churn_model():
     }
 
 
-def predict_churn_probability(customer_health:CustomerHealth):
+def predict_churn_probability(customer_health: CustomerHealth):
     result = train_churn_model()
     model = result["model"]
 
@@ -81,9 +81,12 @@ def predict_churn_probability(customer_health:CustomerHealth):
             customer_health.customer.company_size,
         ]
     ]
-    
-    probability = model.predict_proba(features)[0][1] # [first customer][churn probability]
+
+    probability = model.predict_proba(features)[0][
+        1
+    ]  # [first customer][churn probability]
     return round(probability * 100, 2)
+
 
 def update_ml_churn_probability(customer_health):
     probability = predict_churn_probability(customer_health)
@@ -92,6 +95,7 @@ def update_ml_churn_probability(customer_health):
     customer_health.ml_churn_probability = probability
     customer_health.save(update_fields=["ml_churn_probability"])
     return probability
+
 
 def update_all_ml_churn_probabilities():
     records = CustomerHealth.objects.select_related("customer").all()
@@ -103,3 +107,34 @@ def update_all_ml_churn_probabilities():
             record.save(update_fields=["ml_churn_probability"])
             updated += 1
     return updated
+
+
+def get_model_feature_importance():
+    result = train_churn_model()
+
+    if result is None:
+        return None
+
+    model = result["model"]
+
+    feature_names = [
+        "usage_score",
+        "feature_adoption_score",
+        "reliability_score",
+        "support_score",
+        "company_size",
+    ]
+
+    coefficients = model.coef_[0]
+    
+    importance = [
+        {
+            "feature": feature,
+            "coefficient": round(coef, 4)
+        }
+        for feature, coef in zip(feature_names, coefficients)
+    ]
+    
+    return importance
+
+
