@@ -57,6 +57,17 @@
     {{ watch_count|json_script:"watch-count" }}
     {{ high_risk_count|json_script:"high-risk-count" }} -->
 
+    <h2>ML Feature Importance</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Coefficient</th>
+                <th>Interpretation</th>
+            </tr>
+        </thead>
+        <tbody id="feature-importance-body"></tbody>
+    </table>
 
     <h2>Customer Health Records</h2>
     <table>
