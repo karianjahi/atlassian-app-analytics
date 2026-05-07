@@ -15,6 +15,6 @@ urlpatterns = [
     path("api/customer-health/", views.customer_health_list_api),
     path("api/summary", views.summary_api),
     path("api/dashboard/", views.dashboard_data_api),
-    path("api/customers/<id>/detail/"),
+    path("api/customers/<int:customer_id>/detail/", views.customer_detail_api),
 ]
 
