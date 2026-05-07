@@ -69,4 +69,14 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => {
             console.error("Error loading dashboard data:", error);
         });
+
+        fetch("/api/ml/metrics")
+            .then(response => response.json())
+            .then(metrics => {
+                document.getElementById("ml-accuracy").textContent = `${metrics.accuracy}%`
+            })
+            .catch(error => {
+                console.error("Error loading ML metrics:", error);
+                document.getElementById("ml-accuracy").textContent = "N/A";
+            });
 });
