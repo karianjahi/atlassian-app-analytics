@@ -179,6 +179,106 @@ class Command(BaseCommand):
 
 - The rest of the work is mainly on making the UI better looking and also to add a landing page.
 
+# API Layer
+- “I built a customer analytics system and exposed the insights via a REST API for integration with other frontends.”
+- We use django-restframework. 
+    - Add rest_framework under installed apps in settings
+    - create a `serializers.py` file that serializes (or translates) the 3 models into JSON
+
+- Create customer view `views.py`
+    - Customer list: serialize all customers into JSON using the function `customer_list_api.py`
+    - Customer detail: `customer_detail_api.py` 
+    - Make sure urls.py reflect the various endpoints
+
+- Create health view
+    - Create a health view for each customer using the function `customer_health_api.py`
+
+- Create events view
+    - Create similarly the function `customer_events_api` and update `urls.py`
+
+- Create all customer health records API
+    - Create the function `customer_health_list_api`
+    - The function is such that it accepts a risk label parameter from request as in `/api/customer-health/?risk_label=high_risk` so that it can filter records based on high_risk. Try filtering for `healthy` and `watch`.
+- Also create functionality to filter customer api by country
+- Sorting customer health API list results based on a parameter e.g. support score. Remember, `if .../?ordering=-support_score` (see the negative), we order from highest value to smallest.
+- Create a summary endpoint for total_customers, average_health, healthy, watch and high_risk
+
+- Next is to use API instead of Django templates (Decoupling frontend from Django templates)
+- We do this by creating api endpoints.
+
+- After ensuring our app is api-endpoint based, we can then move on to machine learning
+Customer data
+
+↓
+
+Feature extraction
+
+↓
+
+Train ML model
+
+↓
+
+Predict churn probability
+
+↓
+
+Store prediction
+
+↓
+
+Show in dashboard
+
+- Before training, we need `features + target`
+
+## Features
+- To predict churn, we need:
+    - usage score
+    - feature_adoption_score
+    - reliability_score
+    - support_score
+    - company_size
+    - license_tier
+    - event_frequency
+
+- Target: 
+    - `did_churn = 1` 
+    - `did_not_churn = 0`
+
+- Since there are no real churn labels, we simulate them using existing risk logic
+
+- We add a training label field in the `CustomerHealth` model called `did_churn`
+
+- We create synthetic training labels for `did_churn` as follows:
+    - `health.did_churn = health.health_score < 40`
+    - In actual training data, churn labels comes actual churns from customers
+    - Real churn labels usually come from:
+        - Subscription cancellation
+        - customer canceled subscription
+        - License not renewed
+        - renewal failed
+        - Long inactivity
+        - no usage for 90 days
+        - Downgrade behavior
+        - enterprise → free tier
+ 
+ - At this stage, we now have
+    - `X = features`
+    - `y = target`
+
+- Once we have this, we can:
+    - train a logistic regression model
+    - predict churn probability (0: didn't churn 1: did churn). 
+        - for the `predict_proba result`, we are interested in the `did churn` result
+    - compare ML prediction vs rule-based risk
+
+- Once we calculate the churn probability, we must add it to the database. Functions for this in `ml.py`
+- Next step is to add the `ml_churn_probability` in the API and frontend
 
 
+
+
+
+
+    
     
