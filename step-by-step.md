@@ -277,6 +277,16 @@ Show in dashboard
 - We then create `update_ml_churn.py` that stays in the `analytics/management/commands/` to update the ml churns outside of the app maybe through a cron job.
 - We shall update the app from the file `update_analytics.sh` which has the customer health and ml churn files 
 - Next is to modifty the train churn model so that we include evaluation i.e. `train-test-split` and calculate `accuracy`.
+- Expose the model accuracy through an API so the frontend can show it
+- Add feature importance so yu can explain what drives churn predictions
+    - positive coefficient → increases churn probability
+    - negative coefficient → decreases churn probability
+    - larger absolute value → stronger influence
+- At this stage, the ML system is no longer just predicting but it can also explain its predictions
+- Expose feature importance API to the frontend - dashboard
+- Save the model on disk by first installing `joblib` and defining the path
+- Add model loader
+
 
 
 
