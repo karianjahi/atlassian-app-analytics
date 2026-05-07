@@ -6,22 +6,33 @@ from django.utils import timezone
 
 
 from .models import Customer, CustomerHealth
-from analytics.services import calculate_customer_health_for_all_customers, generate_risk_reasons, generate_recommended_actions
+from analytics.services import (
+    calculate_customer_health_for_all_customers,
+    generate_risk_reasons,
+    generate_recommended_actions,
+)
 
 # for api
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import CustomerSerializer, CustomerHealthSerializer, UsageEventSerializer
+from .serializers import (
+    CustomerSerializer,
+    CustomerHealthSerializer,
+    UsageEventSerializer,
+)
+
 
 def landing_page(request):
     return render(request, "analytics/landing_page.html")
 
+
 def dashboard(request):
     return render(request, "analytics/dashboard.html")
 
+
 def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
-    
+
     # In case selection based on date/dates
     selected_range = request.GET.get("range", "30")
     events = customer.usage_events.all()
@@ -29,33 +40,31 @@ def customer_detail(request, customer_id):
         days = int(selected_range)
         start_date = timezone.now() - timedelta(days=days)
         events = events.filter(timestamp__gte=start_date)
-    
-    health = getattr(customer, "health", None) # dotting also works if you know the attribute by name. This one is meant for dynamic variables
+
+    health = getattr(
+        customer, "health", None
+    )  # dotting also works if you know the attribute by name. This one is meant for dynamic variables
     recent_events = events[:20]
-    
+
     event_distribution = (
-        events
-        .values("event_type")
-        .annotate(count=Count("id"))
-        .order_by("event_type")
+        events.values("event_type").annotate(count=Count("id")).order_by("event_type")
     )
     event_labels = [item["event_type"] for item in event_distribution]
     event_counts = [item["count"] for item in event_distribution]
-    
+
     events_over_time = (
-        events
-        .annotate(event_date=TruncDate("timestamp"))
+        events.annotate(event_date=TruncDate("timestamp"))
         .values("event_date")
         .annotate(count=Count("id"))
         .order_by("event_date")
     )
-    
+
     time_labels = [item["event_date"] for item in events_over_time]
     time_counts = [item["count"] for item in events_over_time]
-    
+
     risk_reasons = generate_risk_reasons(customer)
     recommended_actions = generate_recommended_actions(customer)
-    
+
     context = {
         "customer": customer,
         "health": health,
@@ -69,10 +78,12 @@ def customer_detail(request, customer_id):
         "recommended_actions": recommended_actions,
     }
     return render(request, "analytics/customer_detail.html", context)
-    
+
+
 """
 API Endpoints
 """
+
 
 @api_view(["GET"])
 def customer_list_api(request):
@@ -84,59 +95,66 @@ def customer_list_api(request):
     serializer = CustomerSerializer(customers, many=True)
     return Response(serializer.data)
 
+
 @api_view(["Get"])
 def customer_detail_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     serializer = CustomerSerializer(customer)
     return Response(serializer.data)
 
+
 @api_view(["GET"])
 def customer_health_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     health = getattr(customer, "health", None)
-    
+
     if not health:
         return Response({"detail": "No health data found"}, status=404)
-    
+
     serializer = CustomerHealthSerializer(health)
-    return Response(serializer.data)   
+    return Response(serializer.data)
+
 
 @api_view(["GET"])
 def customer_events_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
-    events = customer.usage_events.all()    
+    events = customer.usage_events.all()
     serializer = UsageEventSerializer(events, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def customer_health_list_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
-    risk_label = request.GET.get("risk_label") # captures the term 'risk_label' from the incoming request
-    
+    risk_label = request.GET.get(
+        "risk_label"
+    )  # captures the term 'risk_label' from the incoming request
+
     # filtering by risk
     if risk_label:
         health_records = health_records.filter(risk_label=risk_label)
-        
+
     # ordering
     ordering = request.GET.get("ordering")
     if ordering:
         health_records = health_records.order_by(ordering)
-        
+
     serializer = CustomerHealthSerializer(health_records, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def summary_api(request):
     total_customers = Customer.objects.count()
-    
-    avg_health = CustomerHealth.objects.aggregate(
-        Avg("health_score")
-    )["health_score__avg"] or 0
-    
+
+    avg_health = (
+        CustomerHealth.objects.aggregate(Avg("health_score"))["health_score__avg"] or 0
+    )
+
     healthy = CustomerHealth.objects.filter(risk_label="healthy").count()
     watch = CustomerHealth.objects.filter(risk_label="watch").count()
     high_risk = CustomerHealth.objects.filter(risk_label="high_risk").count()
-    
+
     data = {
         "total_customers": total_customers,
         "average_health_score": round(avg_health, 1),
@@ -144,14 +162,14 @@ def summary_api(request):
         "watch": watch,
         "high_risk": high_risk,
     }
-    
+
     return Response(data)
 
 
 @api_view(["GET"])
 def dashboard_data_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
-    
+
     data = {
         "summary": {
             "total_customers": Customer.objects.count(),
@@ -159,8 +177,8 @@ def dashboard_data_api(request):
             "watch": health_records.filter(risk_label="watch").count(),
             "high_risk": health_records.filter(risk_label="high_risk").count(),
             "average_health_score": round(
-                health_records.aggregate(Avg("health_score"))["health_score__avg"] or 0
-                ,2
+                health_records.aggregate(Avg("health_score"))["health_score__avg"] or 0,
+                2,
             ),
         },
         "customers": [
@@ -175,5 +193,65 @@ def dashboard_data_api(request):
             for record in health_records
         ],
     }
-    
+
+    return Response(data)
+
+
+@api_view(["GET"])
+def customer_detail_api(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    health = getattr(customer, "health", None)
+    events = customer.usage_events.all()
+
+    event_distribution = (
+        events.values("event_type").annotate(count=Count("id")).order_by("event_type")
+    )
+
+    events_over_time = (
+        events.annotate(event_date=TruncDate("timestamp"))
+        .values("event_date")
+        .annotate(count=Count("id"))
+        .order_by("event_date")
+    )
+    print(events_over_time)
+    data = {
+        "customer": {
+            "id": customer_id,
+            "company_name": customer.company_name,
+            "country": customer.country,
+            "company_size": customer.company_size,
+            "license_tier": customer.get_license_tier_display(),
+            "app_name": customer.app_name,
+            "installed_at": customer.installed_at,
+        },
+        "health": 
+            None
+            if not health
+            else {
+                "usage_score": health.usage_score,
+                "feature_adoption_score": health.feature_adoption_score,
+                "reliability_score": health.reliability_score,
+                "support_score": health.support_score,
+                "health_score": health.health_score,
+                "churn_risk": health.churn_risk,
+                "risk_label": health.get_risk_label_display(),
+            },
+            "events": [
+                {
+                    "event_type": event.event_type,
+                    "timestamp": event.timestamp,
+                    "metadata": event.metadata,
+                }
+                for event in events[:20]
+            ],
+            "event_distribution": {
+                "labels": [item["event_type"] for item in event_distribution],
+                "counts": [item["count"] for item in event_distribution]
+            },
+            "event_over_time": {
+                "labels": [item["event_date"].strftime("%Y-%m-%d") for item in events_over_time],
+                "counts": [item["count"] for item in events_over_time]
+            },
+        
+    }
     return Response(data)
