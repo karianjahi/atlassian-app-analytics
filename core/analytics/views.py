@@ -31,53 +31,7 @@ def dashboard(request):
 
 
 def customer_detail(request, customer_id):
-    customer = get_object_or_404(Customer, id=customer_id)
-
-    # In case selection based on date/dates
-    selected_range = request.GET.get("range", "30")
-    events = customer.usage_events.all()
-    if selected_range != "all":
-        days = int(selected_range)
-        start_date = timezone.now() - timedelta(days=days)
-        events = events.filter(timestamp__gte=start_date)
-
-    health = getattr(
-        customer, "health", None
-    )  # dotting also works if you know the attribute by name. This one is meant for dynamic variables
-    recent_events = events[:20]
-
-    event_distribution = (
-        events.values("event_type").annotate(count=Count("id")).order_by("event_type")
-    )
-    event_labels = [item["event_type"] for item in event_distribution]
-    event_counts = [item["count"] for item in event_distribution]
-
-    events_over_time = (
-        events.annotate(event_date=TruncDate("timestamp"))
-        .values("event_date")
-        .annotate(count=Count("id"))
-        .order_by("event_date")
-    )
-
-    time_labels = [item["event_date"] for item in events_over_time]
-    time_counts = [item["count"] for item in events_over_time]
-
-    risk_reasons = generate_risk_reasons(customer)
-    recommended_actions = generate_recommended_actions(customer)
-
-    context = {
-        "customer": customer,
-        "health": health,
-        "recent_events": recent_events,
-        "event_labels": event_labels,
-        "event_counts": event_counts,
-        "time_labels": time_labels,
-        "time_counts": time_counts,
-        "selected_range": selected_range,
-        "risk_reasons": risk_reasons,
-        "recommended_actions": recommended_actions,
-    }
-    return render(request, "analytics/customer_detail.html", context)
+    return render(request, "analytics/customer_detail.html")
 
 
 """
@@ -96,7 +50,7 @@ def customer_list_api(request):
     return Response(serializer.data)
 
 
-@api_view(["Get"])
+@api_view(["GET"])
 def customer_detail_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     serializer = CustomerSerializer(customer)
@@ -198,7 +152,7 @@ def dashboard_data_api(request):
 
 
 @api_view(["GET"])
-def customer_detail_api(request, customer_id):
+def customer_detail_data_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     health = getattr(customer, "health", None)
     events = customer.usage_events.all()
@@ -213,7 +167,7 @@ def customer_detail_api(request, customer_id):
         .annotate(count=Count("id"))
         .order_by("event_date")
     )
-    print(events_over_time)
+    # print(event_distribution)
     data = {
         "customer": {
             "id": customer_id,
@@ -248,10 +202,13 @@ def customer_detail_api(request, customer_id):
                 "labels": [item["event_type"] for item in event_distribution],
                 "counts": [item["count"] for item in event_distribution]
             },
-            "event_over_time": {
+            "events_over_time": {
                 "labels": [item["event_date"].strftime("%Y-%m-%d") for item in events_over_time],
                 "counts": [item["count"] for item in events_over_time]
             },
+            "risk_reasons": generate_risk_reasons(customer),
+            "recommended_actions":generate_recommended_actions(customer),
         
     }
     return Response(data)
+
