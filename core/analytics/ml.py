@@ -67,3 +67,11 @@ def predict_churn_probability(customer_health):
     
     probability = model.predict_proba(features)[0][1] # [first customer][churn probability]
     return round(probability * 100, 2)
+
+def update_ml_churn_probability(customer_health):
+    probability = predict_churn_probability(customer_health)
+    if probability is None:
+        return None
+    customer_health.ml_churn_probability = probability
+    customer_health.save(update_fields=["ml_churn_probability"])
+    return probability
