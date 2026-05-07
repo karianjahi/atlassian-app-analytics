@@ -27,97 +27,101 @@
         <div id="error-message" class="hidden">
             Failed to load customer data.
         </div>
-        <a class="back-link" href="{% url 'dashboard' %}">← Back to dashboard</a>
 
-        <section id="customer_properties" class="card hero-card">
-            <h1 id="company-name">Loading...</h1>
+        <div id="page-content" class="hidden">
 
-            <div class="details-grid">
-                <p><span>App</span><strong id="app-name"></strong></p>
-                <p><span>Country</span><strong id="country"></strong></p>
-                <p><span>Company size</span><strong id="company-size"></strong></p>
-                <p><span>License</span><strong id="license-tier"></strong></p>
-                <p><span>Installation date</span><strong id="installed-at"></strong></p>
-            </div>
-        </section>
-
-        <section id="customer_health" class="card">
-            <h2>Customer Health</h2>
-
-            <div class="stats-grid" id="health-stats">
-                <div class="stat">Usage Score<strong id="usage-score"></strong></div>
-                <div class="stat">Feature Adoption<strong id="feature-adoption-score"></strong></div>
-                <div class="stat">Reliability<strong id="reliability-score"></strong></div>
-                <div class="stat">Support<strong id="support-score"></strong></div>
-                <div class="stat highlight">Health Score<strong id="health-score"></strong></div>
-                <div class="stat risk">Churn Risk<strong id="churn-risk"></strong></div>
-                <div class="stat">Risk Label<strong id="risk-label"></strong></div>
-            </div>
-
-            <p id="no-health-message" class="hidden">No health score calculated yet.</p>
-        </section>
-
-        <div class="two-column">
-            <section id="riskReason" class="card">
-                <h2>Risk Explanation</h2>
-                <ul id="risk-reasons-list"></ul>
-            </section>
-
-            <section id="recommendedActions" class="card">
-                <h2>Recommended Actions</h2>
-                <ul id="recommended-actions-list"></ul>
-            </section>
-        </div>
-
-        <div class="section-header charts-header">
-            <h2>Event Analytics</h2>
-
-            <form class="range-form">
-                <select name="range" id="range">
-                    <option value="7">Last 7 days</option>
-                    <option value="30" selected>Last 30 days</option>
-                    <option value="90">Last 90 days</option>
-                    <option value="all">All time</option>
-                </select>
-            </form>
-        </div>
-
-        <div class="plots">
-            <section id="eventsChart" class="card chart-card">
-                <h2>Event Distribution</h2>
-                <div class="chart-wrapper">
-                    <canvas id="eventChart"></canvas>
+            <a class="back-link" href="{% url 'dashboard' %}">← Back to dashboard</a>
+    
+            <section id="customer_properties" class="card hero-card">
+                <h1 id="company-name">Loading...</h1>
+    
+                <div class="details-grid">
+                    <p><span>App</span><strong id="app-name"></strong></p>
+                    <p><span>Country</span><strong id="country"></strong></p>
+                    <p><span>Company size</span><strong id="company-size"></strong></p>
+                    <p><span>License</span><strong id="license-tier"></strong></p>
+                    <p><span>Installation date</span><strong id="installed-at"></strong></p>
                 </div>
             </section>
-
-            <section id="eventsOverTime" class="card chart-card">
-                <h2>Time Distribution of Events</h2>
-                <div class="chart-wrapper">
-                    <canvas id="timeChart"></canvas>
+    
+            <section id="customer_health" class="card">
+                <h2>Customer Health</h2>
+    
+                <div class="stats-grid" id="health-stats">
+                    <div class="stat">Usage Score<strong id="usage-score"></strong></div>
+                    <div class="stat">Feature Adoption<strong id="feature-adoption-score"></strong></div>
+                    <div class="stat">Reliability<strong id="reliability-score"></strong></div>
+                    <div class="stat">Support<strong id="support-score"></strong></div>
+                    <div class="stat highlight">Health Score<strong id="health-score"></strong></div>
+                    <div class="stat risk">Churn Risk<strong id="churn-risk"></strong></div>
+                    <div class="stat">Risk Label<strong id="risk-label"></strong></div>
+                </div>
+    
+                <p id="no-health-message" class="hidden">No health score calculated yet.</p>
+            </section>
+    
+            <div class="two-column">
+                <section id="riskReason" class="card">
+                    <h2>Risk Explanation</h2>
+                    <ul id="risk-reasons-list"></ul>
+                </section>
+    
+                <section id="recommendedActions" class="card">
+                    <h2>Recommended Actions</h2>
+                    <ul id="recommended-actions-list"></ul>
+                </section>
+            </div>
+    
+            <div class="section-header charts-header">
+                <h2>Event Analytics</h2>
+    
+                <form class="range-form">
+                    <select name="range" id="range">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="all">All time</option>
+                    </select>
+                </form>
+            </div>
+    
+            <div class="plots">
+                <section id="eventsChart" class="card chart-card">
+                    <h2>Event Distribution</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="eventChart"></canvas>
+                    </div>
+                </section>
+    
+                <section id="eventsOverTime" class="card chart-card">
+                    <h2>Time Distribution of Events</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                </section>
+            </div>
+    
+            <section id="events" class="card">
+                <div class="section-header">
+                    <h2>Recent Events</h2>
+                    <button id="toggleTableBtn" type="button">Show recent events table</button>
+                </div>
+    
+                <div class="table-wrapper">
+                    <table id="recentEventsTable" class="hidden">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Event type</th>
+                                <th>Timestamp</th>
+                                <th>Metadata</th>
+                            </tr>
+                        </thead>
+                        <tbody id="events-table-body"></tbody>
+                    </table>
                 </div>
             </section>
         </div>
-
-        <section id="events" class="card">
-            <div class="section-header">
-                <h2>Recent Events</h2>
-                <button id="toggleTableBtn" type="button">Show recent events table</button>
-            </div>
-
-            <div class="table-wrapper">
-                <table id="recentEventsTable" class="hidden">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Event type</th>
-                            <th>Timestamp</th>
-                            <th>Metadata</th>
-                        </tr>
-                    </thead>
-                    <tbody id="events-table-body"></tbody>
-                </table>
-            </div>
-        </section>
 
     </main>
 

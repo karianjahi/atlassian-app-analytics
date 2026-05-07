@@ -3,15 +3,19 @@ let timeChartInstance = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     const customerId = window.location.pathname.split("/")[2];
-
     loadCustomerDetail(customerId);
     setupTableToggle();
 });
 
 function loadCustomerDetail(customerId) {
+    const loadingMessage = document.getElementById("loading-message");
+    const errorMessage = document.getElementById("error-message");
+    const pageContent = document.getElementById("page-content");
     fetch(`/api/customers/${customerId}/detail/`)
         .then(response => response.json())
         .then(data => {
+            loadingMessage.classList.add("hidden");
+            pageContent.classList.remove("hidden");
             renderCustomerInfo(data.customer);
             renderHealth(data.health);
             renderLists(data.risk_reasons, data.recommended_actions);
@@ -20,6 +24,8 @@ function loadCustomerDetail(customerId) {
         })
         .catch(error => {
             console.error("Error loading customer detail:", error);
+            loadingMessage.classList.add("hidden");
+            errorMessage.classList.remove("hidden");
         });
 }
 
