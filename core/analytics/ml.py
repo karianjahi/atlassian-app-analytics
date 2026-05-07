@@ -58,7 +58,11 @@ def train_churn_model():
     model = LogisticRegression(max_iter=1000)
 
     model.fit(X_train, y_train)
-
+    
+    ## save the model 
+    joblib.dump(model, MODEL_PATH)
+    
+    ## Make predictions
     predictions = model.predict(X_test)
 
     accuracy = accuracy_score(y_test, predictions)
