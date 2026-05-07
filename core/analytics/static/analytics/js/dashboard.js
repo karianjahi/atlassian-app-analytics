@@ -70,13 +70,39 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error loading dashboard data:", error);
         });
 
-        fetch("/api/ml/metrics")
-            .then(response => response.json())
-            .then(metrics => {
-                document.getElementById("ml-accuracy").textContent = `${metrics.accuracy}%`
-            })
-            .catch(error => {
-                console.error("Error loading ML metrics:", error);
-                document.getElementById("ml-accuracy").textContent = "N/A";
+    fetch("/api/ml/metrics")
+        .then(response => response.json())
+        .then(metrics => {
+            document.getElementById("ml-accuracy").textContent = `${metrics.accuracy}%`
+        })
+        .catch(error => {
+            console.error("Error loading ML metrics:", error);
+            document.getElementById("ml-accuracy").textContent = "N/A";
+        });
+
+    fetch("/api/ml/feature-importance/")
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById("feature-importance-body");
+            tableBody.innerHTML = "";
+
+            data.feature_importance.forEach(item => {
+                const row = document.createElement("tr");
+
+                const interpretation = item.coefficient > 0
+                    ? "Increases churn risk"
+                    : "Decreases churn risk";
+
+                row.innerHTML = `
+                <td>${item.feature}</td>
+                <td>${item.coefficient}</td>
+                <td>${interpretation}</td>
+            `;
+
+                tableBody.appendChild(row);
             });
+        })
+        .catch(error => {
+            console.error("Error loading feature importance:", error);
+        });
 });
