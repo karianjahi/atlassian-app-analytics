@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import Customer, CustomerHealth
 from analytics.services import (
@@ -155,7 +157,14 @@ def customer_detail_data_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     health = getattr(customer, "health", None)
     events = customer.usage_events.all()
-
+    
+    # in case a time range is requested
+    selected_range = request.GET.get("range", "30")
+    if selected_range != "all":
+        days = int(selected_range)
+        start_date = timezone.now() - timedelta(days=days)
+        events = events.filter(timestamp__gte=start_date)
+        
     event_distribution = (
         events.values("event_type").annotate(count=Count("id")).order_by("event_type")
     )
