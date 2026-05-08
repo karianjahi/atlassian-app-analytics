@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const summary = data.summary;
             const customers = data.customers;
             renderRiskRankings(data.risk_rankings);
+            renderPagination(data.pagination);
 
             document.getElementById("total-customers").textContent = summary.total_customers;
             document.getElementById("average-health-score").textContent = summary.average_health_score;
@@ -161,4 +162,14 @@ function renderRiskRankings(rankings) {
 
         ruleBody.appendChild(row);
     });
+}
+
+
+function renderPagination(pagination) {
+    document.getElementById("current-page").textContent = pagination.page;
+    document.getElementById("total-pages").textContent = pagination.total_pages;
+
+    document.getElementById("prev-page-btn").disabled = pagination.page <= 1;
+    document.getElementById("next-page-btn").disabled =
+        pagination.page >= pagination.total_pages;
 }
