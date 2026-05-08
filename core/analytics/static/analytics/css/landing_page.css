@@ -54,3 +54,9 @@ li {
 .button-link:hover {
     background-color: #217dbb;
 }
+
+.app-footer {
+
+    margin: 50px
+
+}
