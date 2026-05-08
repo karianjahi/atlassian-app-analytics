@@ -230,12 +230,26 @@ function renderHealthHistoryChart(data) {
         type: "line",
         data: {
             labels: data.labels,
-            datasets: [{
+            datasets: [
+                {
                 label: "Health Score",
                 data: data.health_scores,
                 tension: 0.3,
                 fill: false
-            }]
+            },
+            {
+                label: "Rule-based Churn Risk",
+                data: data.churn_risks,
+                tension: 0.3,
+                fill: false,
+            },
+            {
+                label: "ML Churn Probability",
+                data: data.ml_churn_probabilities,
+                tension: 0.3,
+                fill: false,
+            }
+        ]
         },
         options: {
             responsive: true,
@@ -248,4 +262,4 @@ function renderHealthHistoryChart(data) {
             }
         }
     });
-}
+};
