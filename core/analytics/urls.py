@@ -5,6 +5,7 @@ urlpatterns = [
     path("", views.landing_page, name="landing_page"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("customers/<int:customer_id>/", views.customer_detail, name="customer_detail"),
+    path("upload-csv/", views.upload_csv, name="upload_csv"),
     
     
     ## api urls
@@ -19,6 +20,5 @@ urlpatterns = [
     path("api/ml/metrics/", views.ml_model_metrics_api),
     path("api/ml/feature-importance/", views.ml_feature_importance_api),
     path("api/customers/<int:customer_id>/health-history/", views.customer_health_history_api),
-    path("upload-csv/", views.upload_csv, name="upload_csv"),
 ]
 
