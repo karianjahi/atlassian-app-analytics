@@ -85,6 +85,7 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
             "did_churn": did_churn,
         },
     )
+    create_customer_health_snapshot(customer_health)
     return customer_health
 
 
