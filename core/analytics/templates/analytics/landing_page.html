@@ -13,12 +13,33 @@
 
 <header class="page-section">
     <h1>Atlassian App Analytics</h1>
+
     <p>
-        A customer intelligence prototype for Atlassian Marketplace app vendors.
-        It analyzes customer behaviour, product adoption, churn risk, and customer health.
+        A customer intelligence platform for Atlassian Marketplace app vendors.
+        Upload customer event data, calculate health scores, predict churn risk,
+        and explore interactive analytics dashboards.
     </p>
 
-    <a class="button-link" href="{% url 'dashboard' %}">Go to Dashboard</a>
+    <p>
+        <strong>Recommended workflow:</strong>
+        Upload a CSV file containing customer events, then explore the dashboard
+        to analyze customer health, machine learning churn predictions, alerts,
+        and forecasts.
+    </p>
+
+    <div class="hero-actions">
+        <a class="button-link" href="{% url 'upload_csv' %}">
+            Upload CSV Data
+        </a>
+
+        <a class="button-link secondary" href="{% url 'dashboard' %}">
+            Explore Dashboard
+        </a>
+    </div>
+
+    <p class="helper-text">
+        You can also explore the dashboard directly using the bundled demo data.
+    </p>
 </header>
 
 <section class="page-section">
@@ -156,6 +177,7 @@ Charts, Tables, Alerts, Insights
     </p>
 
     <a class="button-link" href="{% url 'dashboard' %}">Explore Dashboard</a>
+    <a class="button-link" href="{% url 'upload_csv'%}">Upload CSV Data</a>
 </section>
 
 <footer class="app-footer">
