@@ -60,3 +60,16 @@ li {
     margin: 50px
 
 }
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem 0 1rem;
+}
+
+.helper-text {
+    font-size: 0.95rem;
+    color: #666;
+}
