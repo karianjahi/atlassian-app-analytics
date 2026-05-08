@@ -170,7 +170,7 @@ def dashboard_data_api(request):
                 }
                 for record in top_risk_customers
             ],
-            "top_rule-based_risk": [
+            "top_rule_based_risk": [
                 {
                     "id": record.customer.id,
                     "company_name": record.customer.company_name,
