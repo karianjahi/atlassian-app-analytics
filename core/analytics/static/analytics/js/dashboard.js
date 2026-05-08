@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             const summary = data.summary;
             const customers = data.customers;
+            renderRiskRankings(data.risk_rankings);
 
             document.getElementById("total-customers").textContent = summary.total_customers;
             document.getElementById("average-health-score").textContent = summary.average_health_score;
@@ -114,3 +115,48 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error loading feature importance:", error);
         });
 });
+
+function renderRiskRankings(rankings) {
+    console.log(rankings)
+    const mlBody = document.getElementById("top-ml-risk-body");
+    const ruleBody = document.getElementById("top-rule-risk-body");
+
+    mlBody.innerHTML = "";
+    ruleBody.innerHTML = "";
+
+    rankings.top_ml_risk.forEach((customer, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>
+                <a href="/customers/${customer.id}/">
+                    ${customer.company_name}
+                </a>
+            </td>
+            <td>${customer.app_name}</td>
+            <td>${customer.ml_churn_probability}%</td>
+            <td>${customer.health_score}</td>
+        `;
+
+        mlBody.appendChild(row);
+    });
+
+    rankings.top_rule_based_risk.forEach((customer, index) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>
+                <a href="/customers/${customer.id}/">
+                    ${customer.company_name}
+                </a>
+            </td>
+            <td>${customer.app_name}</td>
+            <td>${customer.churn_risk}%</td>
+            <td>${customer.health_score}</td>
+        `;
+
+        ruleBody.appendChild(row);
+    });
+}
