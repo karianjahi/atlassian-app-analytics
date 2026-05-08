@@ -3,6 +3,7 @@ from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
+from math import ceil
 
 from .models import Customer, CustomerHealth
 from analytics.services import (
@@ -126,6 +127,19 @@ def summary_api(request):
 @api_view(["GET"])
 def dashboard_data_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
+    
+    page = int(request.GET.get("page", 1))
+    page_size = int(request.GET.get("page_size", 20))
+    
+    total_records = health_records.count()
+    total_pages = ceil(total_records / page_size)
+    
+    start = (page - 1) * page_size
+    end = start + page_size
+    print(f"total pages: {total_pages} start: {start} end: {end}")
+    
+    paginated_health_records = health_records.order_by("-churn_risk")[start:end]
+    
     top_risk_customers = (
         health_records
         .order_by("-ml_churn_probability")[:5]
@@ -156,7 +170,7 @@ def dashboard_data_api(request):
                 "ml_churn_probability": record.ml_churn_probability,
                 "risk_label": record.get_risk_label_display(),
             }
-            for record in health_records
+            for record in paginated_health_records
         ],
         
         "risk_rankings": {
@@ -180,6 +194,12 @@ def dashboard_data_api(request):
                 } 
                 for record in top_declining_customers
             ]
+        },
+        "pagination": {
+            "page": page,
+            "page_size": page_size,
+            "total_records": total_records,
+            "total_pages": total_pages,
         }
     }
 
