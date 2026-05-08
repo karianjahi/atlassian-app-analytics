@@ -172,3 +172,41 @@ def create_customer_health_snapshot(customer_health: CustomerHealth):
         risk_label=customer_health.risk_label,
     )
     return snapshot
+
+
+def generate_health_insights(customer):
+    snapshots = customer.health_snapshots.order_by("created_at")
+
+    if snapshots.count() < 2:
+        return ["Not enough historical data to generate insights"]
+
+    first = snapshots.first()
+    latest = snapshots.last()
+
+    insights = []
+
+    health_change = latest.health_score - first.health_score
+
+    if health_change > 0:
+        insights.append(
+            f"Health score improved by {round(health_change, 2)} points over time"
+        )
+    elif health_change < 0:
+        insights.append(
+            f"Health score declined by {round(abs(health_change), 2)} points over time."
+        )
+    else:
+        insights.append("Health Score remained stable over time")
+    ml_change = latest.ml_churn_probability - first.ml_churn_probability
+
+    if ml_change > 0:
+        insights.append(f"ML churn probability increased by {round(ml_change, 2)}%.")
+    elif ml_change < 0:
+        insights.append(
+            f"ML churn probability decreased by {round(abs(ml_change), 2)}%."
+        )
+
+    if latest.health_score < 40:
+        insights.append("Customer is currently in a high-risk health range.")
+
+    return insights
