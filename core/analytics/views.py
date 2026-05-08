@@ -8,6 +8,9 @@ from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
 from django.utils.dateparse import parse_datetime
+
+from django.core.management import call_command
+
 from math import ceil
 
 from .forms import CSVUploadForm
@@ -146,13 +149,19 @@ def upload_csv(request):
 
                 except Exception:
                     skipped_rows += 1
-
+            
+            
+            # calculate customer health  and update ml churn
+            call_command("update_customer_health")
+            call_command("update_ml_churn")
+            
             messages.success(
                 request,
                 (
                     f"Imported {events_created} events. "
                     f"Created {customers_created} new customers. "
-                    f"Skipped {skipped_rows} rows."
+                    f"Skipped {skipped_rows} rows.",
+                    "and refreshed analytics"
                 )
             )
 
