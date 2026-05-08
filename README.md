@@ -8,21 +8,21 @@ Customer Behaviour Analytics Platform for Atlassian Marketplace Apps.
 ## Screenshots
 
 ### Landing Page
-![Landing Page](images/landing_page-top.png)
-![Landing Page](images/landing_page-middle-top.png)
-![Landing Page](images/landing_page-middle.png)
-![Landing Page](images/landing_page-bottom.png)
+![Landing Page 1](images/landing_page_top.png)
+![Landing Page 2](images/landing_page_middletop.png)
+![Landing Page 3](images/landing_page_middle.png)
+![Landing Page 3](images/landing_page_bottom.png)
 
 ### Dashboard
-![Dashboard](images/dashboard-top.png)
-![Dashboard](images/dashboard-risks.png)
-![Dashboard](images/dashboard-health-records.png)
+![Dashboard 1](images/dashboard_top.png)
+![Dashboard 2](images/dashboard_risks.png)
+![Dashboard 3](images/dashboard_health_records.png)
 
 
 ### Customer Detail Page
-![Customer Detail Page](images/customer_detail_top.png)
-![Customer Detail Page](images/customer_detail_middle.png)
-![Customer Detail Page](images/customer_detail_bottom.png)
+![Customer Detail Page 1](images/customer_detail_top.png)
+![Customer Detail Page 2](images/customer_detail_middle.png)
+![Customer Detail Page 3](images/customer_detail_bottom.png)
 
 ### ML Feature Importance
 ![ML Feature Importance](images/feature_importance.png)
