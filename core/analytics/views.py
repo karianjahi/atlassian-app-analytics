@@ -45,6 +45,29 @@ def customer_detail(request, customer_id):
 
 
 """
+CSV file upload
+"""
+def upload_csv(request):
+    if request.method == "POST":
+        form = CSVUploadForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            csv_file = request.FILES["csv_file"]
+            
+            # Read uploaded CSV into a pandas DataFrame
+            df = pd.read_csv(csv_file)
+            
+            # For now, Just show how many rows were loaded
+            messages.success(request, f'Successfully loaded {len(df)} rows from CSV')
+            
+            return redirect("upload_csv")
+    else:
+        form = CSVUploadForm()
+    
+    return render(request, "analytics/upload_csv.html", {"form": form})
+
+
+"""
 API Endpoints
 """
 
