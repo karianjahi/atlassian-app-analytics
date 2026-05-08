@@ -1,26 +1,28 @@
 from django.db import models
 
+
 # Create your models here.
 class Customer(models.Model):
     company_name = models.CharField(max_length=255)
     country = models.CharField(max_length=100)
     company_size = models.PositiveBigIntegerField()
-    
+
     LICENSE_CHOICES = [
         ("free", "Free"),
         ("standard", "Standard"),
-        ("premium", "Premium")
+        ("premium", "Premium"),
     ]
-    
-    license_tier = models.CharField(max_length=20, 
-                                    choices=LICENSE_CHOICES, 
-                                    default="free")
+
+    license_tier = models.CharField(
+        max_length=20, choices=LICENSE_CHOICES, default="free"
+    )
     app_name = models.CharField(max_length=255)
     installed_at = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"{self.company_name} {self.app_name}"
+
 
 class UsageEvent(models.Model):
     EVENT_CHOICES = [
@@ -33,10 +35,10 @@ class UsageEvent(models.Model):
         ("opened_support_ticket", "Opened Support Ticket"),
         ("subscription_cancelled", "Subscription Cancelled"),
     ]
-    
-    customer = models.ForeignKey(Customer, 
-                                 on_delete=models.CASCADE, 
-                                 related_name="usage_events")
+
+    customer = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, related_name="usage_events"
+    )
     event_type = models.CharField(max_length=100, choices=EVENT_CHOICES)
     timestamp = models.DateTimeField()
     metadata = models.JSONField(default=dict, blank=True)
@@ -44,27 +46,30 @@ class UsageEvent(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
-    
+
     def __str__(self):
         return f"{self.customer.company_name} - {self.event_type}"
-    
-class CustomerHealth(models.Model): 
+
+
+class CustomerHealth(models.Model):
     RISK_LABEL_CHOICES = [
         ("healthy", "Healthy"),
         ("watch", "Watch"),
         ("high_risk", "High Risk"),
     ]
-    
-    customer = models.OneToOneField(Customer, 
-                                    on_delete=models.CASCADE, 
-                                    related_name="health")
+
+    customer = models.OneToOneField(
+        Customer, on_delete=models.CASCADE, related_name="health"
+    )
     usage_score = models.FloatField(default=0)
     feature_adoption_score = models.FloatField(default=0)
     reliability_score = models.FloatField(default=0)
     support_score = models.FloatField(default=0)
     health_score = models.FloatField(default=0)
     churn_risk = models.FloatField(default=0)
-    risk_label = models.CharField(max_length=20, choices=RISK_LABEL_CHOICES, default="watch")
+    risk_label = models.CharField(
+        max_length=20, choices=RISK_LABEL_CHOICES, default="watch"
+    )
     calculated_at = models.DateTimeField(auto_now=True)
     did_churn = models.BooleanField(default=False)
     ml_churn_probability = models.FloatField(default=0)
@@ -74,3 +79,28 @@ class CustomerHealth(models.Model):
 
     def __str__(self):
         return f"{self.customer.company_name} - {self.risk_label}"
+
+
+class CustomerHealthSnapshot(models.Model):
+    customer = models.ForeignKey(
+        Customer, on_delete=models.CASCADE, related_name="health_snapshots"
+    )
+    usage_score = models.FloatField(default=0)
+    feature_adoption_score = models.FloatField(default=0)
+    reliability_score = models.FloatField(default=0)
+    support_score = models.FloatField(default=0)
+    health_score = models.FloatField(default=0)
+    churn_risk = models.FloatField(default=0)
+    ml_churn_probability = models.FloatField(default=0)
+
+    risk_label = models.CharField(max_length=20)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return (
+            f"{self.customer.company_name} - {self.health_score} at {self.created_at}"
+        )
