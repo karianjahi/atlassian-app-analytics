@@ -210,3 +210,37 @@ def generate_health_insights(customer):
         insights.append("Customer is currently in a high-risk health range.")
 
     return insights
+
+
+def generate_customer_alerts(customer):
+    snapshots = customer.health_snapshots.order_by("created_at")
+
+    if snapshots.count() < 2:
+        return []
+
+    first = snapshots.first()
+    latest = snapshots.last()
+
+    alerts = []
+
+    health_drop = first.health_score - latest.health_score
+    
+    if health_drop >= 15:
+        alerts.append(f"Health score dropped by {round(health_drop, 2)} points.")
+    
+    ml_increase = (latest.ml_churn_probability - first.ml_churn_probability)
+    if ml_increase >= 20:
+        alerts.append(
+        f"ML churn probability increased by {round(ml_increase, 2)}%."
+    )
+        
+    if latest.health_score < 40:
+        alerts.append("Customer is currently classified as high risk.")
+        
+    if latest.ml_churn_probability >= 80:
+        alerts.append(
+            "ML model predicts extremely high churn probability."
+        )
+        
+    
+        
