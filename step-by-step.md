@@ -327,7 +327,17 @@ Show in dashboard
 - We generate automatic customer insights from trend data by creating an insight generator inside services. The function is `generate_health_insights(customer)`
 
 - We then expose the above insights through an API endpoint to show in frontend
-
+- At this point, the app can now
+    - measure
+    - predict
+    - track history
+    - visualize
+    - interpret customer health
+- Next item is to create an alert generator that automatically flags customers when
+    - health score drops sharply
+    - ML churn probability rises
+    - customer enters high-risk range
+- The generator is also a service and therefore built within the `services.py`. We call the function `generate_customer_alerts`
 
 
 
