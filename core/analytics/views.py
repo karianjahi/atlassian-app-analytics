@@ -1,9 +1,13 @@
-from django.shortcuts import render, get_object_or_404
+import pandas as pd
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
 from math import ceil
+
+from .forms import CSVUploadForm
 
 from .models import Customer, CustomerHealth
 from analytics.services import (
@@ -22,6 +26,8 @@ from .serializers import (
     CustomerHealthSerializer,
     UsageEventSerializer,
 )
+
+
 
 from analytics.ml import train_churn_model, get_model_feature_importance
 
