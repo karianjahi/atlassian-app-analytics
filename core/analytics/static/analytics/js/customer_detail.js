@@ -1,11 +1,12 @@
 let eventChartInstance = null;
 let timeChartInstance = null;
+let healthHistoryChartInstance = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     const customerId = window.location.pathname.split("/")[2];
     const rangeSelect = document.getElementById("range");
     loadCustomerDetail(customerId, rangeSelect.value);
-
+    loadHealthHistory(customerId)
     rangeSelect.addEventListener("change", function() {
         loadCustomerDetail(customerId, rangeSelect.value)
     });
@@ -200,5 +201,51 @@ function renderLists(riskReasons, recommendedActions) {
         const li = document.createElement("li");
         li.textContent = action;
         actionList.appendChild(li);
+    });
+}
+
+function loadHealthHistory(customerId) {
+    fetch(`/api/customers/${customerId}/health-history/`)
+        .then(response => response.json())
+        .then(data => {
+            renderHealthHistoryChart(data);
+        })
+        .catch(error => {
+            console.error("Error loading health history:", error);
+        });
+}
+
+function renderHealthHistoryChart(data) {
+    const canvas = document.getElementById("healthHistoryChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    if (healthHistoryChartInstance) {
+        healthHistoryChartInstance.destroy();
+    }
+
+    healthHistoryChartInstance = new Chart(canvas.getContext("2d"), {
+        type: "line",
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: "Health Score",
+                data: data.health_scores,
+                tension: 0.3,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
     });
 }
