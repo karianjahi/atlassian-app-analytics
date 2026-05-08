@@ -1,15 +1,18 @@
+import json
 import pandas as pd
+pd.set_option('display.max_columns', None)
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.dateparse import parse_datetime
 from math import ceil
 
 from .forms import CSVUploadForm
 
-from .models import Customer, CustomerHealth
+from .models import Customer, CustomerHealth, UsageEvent
 from analytics.services import (
     generate_risk_reasons,
     generate_recommended_actions,
@@ -26,7 +29,6 @@ from .serializers import (
     CustomerHealthSerializer,
     UsageEventSerializer,
 )
-
 
 
 from analytics.ml import train_churn_model, get_model_feature_importance
@@ -47,24 +49,123 @@ def customer_detail(request, customer_id):
 """
 CSV file upload
 """
+
+
+import json
+import pandas as pd
+
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.utils.dateparse import parse_datetime
+
+from .forms import CSVUploadForm
+from .models import Customer, UsageEvent
+
+
 def upload_csv(request):
     if request.method == "POST":
         form = CSVUploadForm(request.POST, request.FILES)
-        
+
         if form.is_valid():
             csv_file = form.cleaned_data["csv_file"]
-            
-            # Read uploaded CSV into a pandas DataFrame
-            df = pd.read_csv(csv_file)
-            
-            # For now, Just show how many rows were loaded
-            messages.success(request, f'Successfully loaded {len(df)} rows from CSV')
-            
-            return redirect("upload_csv")
+
+            try:
+                df = pd.read_csv(csv_file, sep=",", quotechar='"')
+            except Exception as error:
+                messages.error(
+                    request,
+                    f"Could not read CSV file: {error}"
+                )
+                return redirect("upload_csv")
+
+            required_columns = [
+                "company_name",
+                "app_name",
+                "country",
+                "company_size",
+                "license_tier",
+                "installed_at",
+                "event_type",
+                "timestamp",
+                "metadata",
+            ]
+
+            missing_columns = [
+                column for column in required_columns
+                if column not in df.columns
+            ]
+
+            if missing_columns:
+                messages.error(
+                    request,
+                    f"Missing required columns: {', '.join(missing_columns)}"
+                )
+                return redirect("upload_csv")
+
+            customers_created = 0
+            events_created = 0
+            skipped_rows = 0
+
+            for index, row in df.iterrows():
+                try:
+                    installed_at_datetime = parse_datetime(str(row["installed_at"]))
+                    event_timestamp = parse_datetime(str(row["timestamp"]))
+
+                    if installed_at_datetime is None or event_timestamp is None:
+                        skipped_rows += 1
+                        continue
+
+                    installed_at = installed_at_datetime.date()
+
+                    metadata = {}
+                    if pd.notna(row["metadata"]) and str(row["metadata"]).strip():
+                        metadata = json.loads(row["metadata"])
+
+                    customer, created = Customer.objects.get_or_create(
+                        company_name=row["company_name"],
+                        app_name=row["app_name"],
+                        defaults={
+                            "country": row["country"],
+                            "company_size": int(row["company_size"]),
+                            "license_tier": row["license_tier"],
+                            "installed_at": installed_at,
+                        }
+                    )
+
+                    if created:
+                        customers_created += 1
+
+                    UsageEvent.objects.create(
+                        customer=customer,
+                        event_type=row["event_type"],
+                        timestamp=event_timestamp,
+                        metadata=metadata,
+                    )
+
+                    events_created += 1
+
+                except Exception:
+                    skipped_rows += 1
+
+            messages.success(
+                request,
+                (
+                    f"Imported {events_created} events. "
+                    f"Created {customers_created} new customers. "
+                    f"Skipped {skipped_rows} rows."
+                )
+            )
+
+            return redirect("landing_page")
+
     else:
         form = CSVUploadForm()
-    
-    return render(request, "analytics/upload_csv.html", {"form": form})
+
+    return render(
+        request,
+        "analytics/upload_csv.html",
+        {"form": form}
+    )
 
 
 """
@@ -156,26 +257,23 @@ def summary_api(request):
 @api_view(["GET"])
 def dashboard_data_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
-    
+
     page = int(request.GET.get("page", 1))
     page_size = int(request.GET.get("page_size", 20))
-    
+
     total_records = health_records.count()
     total_pages = ceil(total_records / page_size)
-    
+
     start = (page - 1) * page_size
     end = start + page_size
     print(f"total pages: {total_pages} start: {start} end: {end}")
-    
+
     paginated_health_records = health_records.order_by("-churn_risk")[start:end]
-    
-    top_risk_customers = (
-        health_records
-        .order_by("-ml_churn_probability")[:5]
-        )
-    
+
+    top_risk_customers = health_records.order_by("-ml_churn_probability")[:5]
+
     top_declining_customers = sorted(
-        health_records, key=lambda record:record.churn_risk, reverse=True
+        health_records, key=lambda record: record.churn_risk, reverse=True
     )[:5]
 
     data = {
@@ -201,7 +299,6 @@ def dashboard_data_api(request):
             }
             for record in paginated_health_records
         ],
-        
         "risk_rankings": {
             "top_ml_risk": [
                 {
@@ -220,16 +317,16 @@ def dashboard_data_api(request):
                     "app_name": record.customer.app_name,
                     "churn_risk": record.churn_risk,
                     "health_score": record.health_score,
-                } 
+                }
                 for record in top_declining_customers
-            ]
+            ],
         },
         "pagination": {
             "page": page,
             "page_size": page_size,
             "total_records": total_records,
             "total_pages": total_pages,
-        }
+        },
     }
 
     return Response(data)
