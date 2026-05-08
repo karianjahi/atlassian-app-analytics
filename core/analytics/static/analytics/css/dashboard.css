@@ -286,3 +286,7 @@ tbody tr:nth-child(even) {
     color: #6b7280;
     letter-spacing: 0.02em;
 }
+
+.pagination-controls {
+    margin-bottom: 4rem;
+}
