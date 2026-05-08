@@ -52,7 +52,7 @@ def upload_csv(request):
         form = CSVUploadForm(request.POST, request.FILES)
         
         if form.is_valid():
-            csv_file = request.FILES["csv_file"]
+            csv_file = form.cleaned_data["csv_file"]
             
             # Read uploaded CSV into a pandas DataFrame
             df = pd.read_csv(csv_file)
