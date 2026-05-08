@@ -337,8 +337,10 @@ Show in dashboard
     - health score drops sharply
     - ML churn probability rises
     - customer enters high-risk range
-- The generator is also a service and therefore built within the `services.py`. We call the function `generate_customer_alerts`
+- The generator is also a service and therefore built within the `services.py`. We call the function `generate_customer_alerts(customer)`
 
+- We then forecast next health score using recent trend
+- We add a `forecast_next_health_score(customer)` function in the services section
 
 
 
