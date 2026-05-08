@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,116 +12,133 @@
 
 <body>
 
-<header class="page-section">
-    <h1>Atlassian App Analytics</h1>
+    <header class="page-section">
+        <h1>Atlassian App Analytics</h1>
 
-    <p>
-        A customer intelligence platform for Atlassian Marketplace app vendors.
-        Upload customer event data, calculate health scores, predict churn risk,
-        and explore interactive analytics dashboards.
-    </p>
+        <p>
+            A customer intelligence platform for Atlassian Marketplace app vendors.
+            Upload customer event data, calculate health scores, predict churn risk,
+            and explore interactive analytics dashboards.
+        </p>
 
-    <p>
-        <strong>Recommended workflow:</strong>
-        Upload a CSV file containing customer events, then explore the dashboard
-        to analyze customer health, machine learning churn predictions, alerts,
-        and forecasts.
-    </p>
+        <p>
+            <strong>Recommended workflow:</strong>
+            Upload a CSV file containing customer events, then explore the dashboard
+            to analyze customer health, machine learning churn predictions, alerts,
+            and forecasts.
+        </p>
 
-    <div class="hero-actions">
-        <a class="button-link" href="{% url 'upload_csv' %}">
-            Upload CSV Data
-        </a>
+        <div class="hero-actions">
+            <button type="button" class="button-link" id="toggle-upload-btn">
+                Upload CSV Data
+            </button>
 
-        <a class="button-link secondary" href="{% url 'dashboard' %}">
-            Explore Dashboard
-        </a>
-    </div>
+            <a class="button-link secondary" href="{% url 'dashboard' %}">
+                Explore Dashboard
+            </a>
+        </div>
 
-    <p class="helper-text">
-        You can also explore the dashboard directly using the bundled demo data.
-    </p>
-</header>
+        <div id="upload-section" class="upload-section">
+            <h2>Upload Customer Events CSV</h2>
 
-<section class="page-section">
-    <h2>Background</h2>
-    <p>
-        Atlassian Marketplace vendors build apps that extend products like Jira and Confluence.
-        As customers interact with these apps, they generate usage signals such as installations,
-        configuration events, feature usage, sync failures, and support activity.
-    </p>
-    <p>
-        This project turns those signals into analytics that help product and customer-success teams
-        understand which customers are healthy, which are at risk, and which may need attention.
-    </p>
-</section>
+            {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            {% endif %}
 
-<section class="page-section">
-    <h2>Motivation</h2>
-    <p>
-        Raw event data alone is difficult to interpret. Product teams need clear answers:
-    </p>
+            <form method="post" enctype="multipart/form-data" action="{% url 'upload_csv' %}">
+                {% csrf_token %}
+                {{ upload_form.as_p }}
 
-    <ul>
-        <li>Which customers are actively using the app?</li>
-        <li>Which customers are likely to churn?</li>
-        <li>Which features are being adopted?</li>
-        <li>How is customer health changing over time?</li>
-        <li>Which customers should be prioritized first?</li>
-    </ul>
-</section>
+                <button type="submit">Upload CSV</button>
+            </form>
+        </div>
 
-<section class="page-section">
-    <h2>Inspired by codefortynine</h2>
-    <p>
-        This mini-project is inspired by the kind of Atlassian Marketplace apps built by
-        codefortynine GmbH in Karlsruhe.
-    </p>
+        <p class="helper-text">
+            You can also explore the dashboard directly using the bundled demo data.
+        </p>
+    </header>
 
-    <p>
-        The prototype is designed around customer behaviour analytics for app portfolios similar to:
-    </p>
+    <section class="page-section">
+        <h2>Background</h2>
+        <p>
+            Atlassian Marketplace vendors build apps that extend products like Jira and Confluence.
+            As customers interact with these apps, they generate usage signals such as installations,
+            configuration events, feature usage, sync failures, and support activity.
+        </p>
+        <p>
+            This project turns those signals into analytics that help product and customer-success teams
+            understand which customers are healthy, which are at risk, and which may need attention.
+        </p>
+    </section>
 
-    <ul>
-        <li>Deep Clone for Jira</li>
-        <li>External Data for Jira Fields</li>
-        <li>Quick Filters for Jira Dashboards</li>
-        <li>Merge Agent for Jira</li>
-        <li>Snipe-IT for Jira</li>
-    </ul>
+    <section class="page-section">
+        <h2>Motivation</h2>
+        <p>
+            Raw event data alone is difficult to interpret. Product teams need clear answers:
+        </p>
 
-    <p>
-        The project is not affiliated with codefortynine. It is a portfolio prototype built to
-        demonstrate backend engineering, analytics, machine learning, and product thinking.
-    </p>
-</section>
+        <ul>
+            <li>Which customers are actively using the app?</li>
+            <li>Which customers are likely to churn?</li>
+            <li>Which features are being adopted?</li>
+            <li>How is customer health changing over time?</li>
+            <li>Which customers should be prioritized first?</li>
+        </ul>
+    </section>
 
-<section class="page-section">
-    <h2>What the Platform Does</h2>
+    <section class="page-section">
+        <h2>Inspired by codefortynine</h2>
+        <p>
+            This mini-project is inspired by the kind of Atlassian Marketplace apps built by
+            codefortynine GmbH in Karlsruhe.
+        </p>
 
-    <ul>
-        <li>Tracks customer usage events</li>
-        <li>Calculates rule-based customer health scores</li>
-        <li>Classifies customers as Healthy, Watch, or High Risk</li>
-        <li>Predicts churn probability using machine learning</li>
-        <li>Shows feature importance for model explainability</li>
-        <li>Stores historical health snapshots</li>
-        <li>Visualizes customer health trends over time</li>
-        <li>Generates automated insights and alerts</li>
-        <li>Forecasts the next health score based on recent trends</li>
-        <li>Ranks customers by churn risk for prioritization</li>
-    </ul>
-</section>
+        <p>
+            The prototype is designed around customer behaviour analytics for app portfolios similar to:
+        </p>
 
-<section class="page-section">
-    <h2>Technical Architecture</h2>
+        <ul>
+            <li>Deep Clone for Jira</li>
+            <li>External Data for Jira Fields</li>
+            <li>Quick Filters for Jira Dashboards</li>
+            <li>Merge Agent for Jira</li>
+            <li>Snipe-IT for Jira</li>
+        </ul>
 
-    <p>
-        The application uses Django as the backend, Django REST Framework for APIs,
-        PostgreSQL for persistence, and JavaScript with Chart.js for interactive frontend rendering.
-    </p>
+        <p>
+            The project is not affiliated with codefortynine. It is a portfolio prototype built to
+            demonstrate backend engineering, analytics, machine learning, and product thinking.
+        </p>
+    </section>
 
-    <pre>
+    <section class="page-section">
+        <h2>What the Platform Does</h2>
+
+        <ul>
+            <li>Tracks customer usage events</li>
+            <li>Calculates rule-based customer health scores</li>
+            <li>Classifies customers as Healthy, Watch, or High Risk</li>
+            <li>Predicts churn probability using machine learning</li>
+            <li>Shows feature importance for model explainability</li>
+            <li>Stores historical health snapshots</li>
+            <li>Visualizes customer health trends over time</li>
+            <li>Generates automated insights and alerts</li>
+            <li>Forecasts the next health score based on recent trends</li>
+            <li>Ranks customers by churn risk for prioritization</li>
+        </ul>
+    </section>
+
+    <section class="page-section">
+        <h2>Technical Architecture</h2>
+
+        <p>
+            The application uses Django as the backend, Django REST Framework for APIs,
+            PostgreSQL for persistence, and JavaScript with Chart.js for interactive frontend rendering.
+        </p>
+
+        <pre>
 PostgreSQL
    ↓
 Django Models
@@ -135,54 +153,55 @@ JavaScript Frontend
    ↓
 Charts, Tables, Alerts, Insights
     </pre>
-</section>
+    </section>
 
-<section class="page-section">
-    <h2>Machine Learning Layer</h2>
+    <section class="page-section">
+        <h2>Machine Learning Layer</h2>
 
-    <p>
-        The machine learning component uses customer health and behaviour metrics to estimate churn
-        probability. The model is trained with scikit-learn and saved using joblib.
-    </p>
+        <p>
+            The machine learning component uses customer health and behaviour metrics to estimate churn
+            probability. The model is trained with scikit-learn and saved using joblib.
+        </p>
 
-    <ul>
-        <li>Builds a pandas training DataFrame from Django data</li>
-        <li>Trains a logistic regression churn model</li>
-        <li>Evaluates model accuracy</li>
-        <li>Stores ML churn probability per customer</li>
-        <li>Displays model feature importance on the dashboard</li>
-    </ul>
-</section>
+        <ul>
+            <li>Builds a pandas training DataFrame from Django data</li>
+            <li>Trains a logistic regression churn model</li>
+            <li>Evaluates model accuracy</li>
+            <li>Stores ML churn probability per customer</li>
+            <li>Displays model feature importance on the dashboard</li>
+        </ul>
+    </section>
 
-<section class="page-section">
-    <h2>Current Limitations</h2>
+    <section class="page-section">
+        <h2>Current Limitations</h2>
 
-    <ul>
-        <li>Uses synthetic/demo data</li>
-        <li>Uses synthetic churn labels for prototype training</li>
-        <li>Does not yet integrate with real Atlassian APIs</li>
-        <li>Does not yet use real subscription cancellation data</li>
-        <li>No authentication or role-based access yet</li>
-        <li>Forecasting is currently trend-based and simple</li>
-    </ul>
-</section>
+        <ul>
+            <li>Uses synthetic/demo data</li>
+            <li>Uses synthetic churn labels for prototype training</li>
+            <li>Does not yet integrate with real Atlassian APIs</li>
+            <li>Does not yet use real subscription cancellation data</li>
+            <li>No authentication or role-based access yet</li>
+            <li>Forecasting is currently trend-based and simple</li>
+        </ul>
+    </section>
 
-<section class="page-section">
-    <h2>Why This Project Matters</h2>
+    <section class="page-section">
+        <h2>Why This Project Matters</h2>
 
-    <p>
-        This project shows how raw product usage data can become actionable customer intelligence.
-        It combines backend development, REST API design, frontend rendering, analytics, machine learning,
-        explainability, forecasting, and customer-success thinking in one coherent prototype.
-    </p>
+        <p>
+            This project shows how raw product usage data can become actionable customer intelligence.
+            It combines backend development, REST API design, frontend rendering, analytics, machine learning,
+            explainability, forecasting, and customer-success thinking in one coherent prototype.
+        </p>
 
-    <a class="button-link" href="{% url 'dashboard' %}">Explore Dashboard</a>
-    <a class="button-link" href="{% url 'upload_csv'%}">Upload CSV Data</a>
-</section>
+        <a class="button-link" href="{% url 'dashboard' %}">Explore Dashboard</a>
+        <a class="button-link" href="{% url 'upload_csv'%}">Upload CSV Data</a>
+    </section>
 
-<footer class="app-footer">
-    <p>© {% now "Y" %} Dr. Joseph Njeri. All rights reserved.</p>
-</footer>
-
+    <footer class="app-footer">
+        <p>© {% now "Y" %} Dr. Joseph Njeri. All rights reserved.</p>
+    </footer>
+    <script src="{% static 'analytics/js/landing_page.js' %}"></script>
 </body>
+
 </html>
