@@ -10,6 +10,7 @@ from analytics.services import (
     generate_recommended_actions,
     generate_health_insights,
     generate_customer_alerts,
+    forecast_next_health_score,
 )
 
 # for api
@@ -226,6 +227,10 @@ def customer_detail_data_api(request, customer_id):
         "recommended_actions": generate_recommended_actions(customer),
         "health_insights": generate_health_insights(customer),
         "alerts": generate_customer_alerts(customer),
+        "forecast": {
+            "next_health_score": forecast_next_health_score(customer),
+        },
+        
     }
     return Response(data)
 

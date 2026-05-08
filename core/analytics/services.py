@@ -242,5 +242,41 @@ def generate_customer_alerts(customer):
             "ML model predicts extremely high churn probability."
         )
     return alerts
+
+
+def forecast_next_health_score(customer):
+    """_summary_
+    looks at the last few health snapshots and estimates:
+    next health score = latest score + average recent change
+    
+    Example:
+    70 → 65 → 60
+    average change = -5
+    forecast = 55
+    """
+    snapshots = customer.health_snapshots.order_by("created_at")
+
+    if snapshots.count() < 2:
+        return None
+
+    recent_snapshots = snapshots.order_by("-created_at")[:5]
+    recent_snapshots = list(recent_snapshots)[::-1]
+
+    if len(recent_snapshots) < 2:
+        return None
+
+    first = recent_snapshots[0]
+    latest = recent_snapshots[-1]
+
+    score_change = latest.health_score - first.health_score
+    number_of_steps = len(recent_snapshots) - 1
+
+    average_change = score_change / number_of_steps
+
+    forecast = latest.health_score + average_change
+
+    forecast = max(0, min(100, forecast))
+
+    return round(forecast, 2)
     
         
