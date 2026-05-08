@@ -26,7 +26,8 @@ function loadCustomerDetail(customerId, selectedRange) {
             renderCustomerInfo(data.customer);
             renderHealth(data.health);
             renderLists(data.risk_reasons, data.recommended_actions);
-            renderInsights(data.health_insights)
+            renderInsights(data.health_insights);
+            renderAlerts(data.alerts),
             renderCharts(data.event_distribution, data.events_over_time);
             renderEventsTable(data.events);
         })
@@ -281,3 +282,27 @@ function renderInsights(insights) {
     });
 };
 
+function renderAlerts(alerts) {
+    const alertslist = document.getElementById("customer-alerts-list");
+
+    if (!alertslist) {
+        return ;
+    }
+
+    alertslist.innerHTML = "";
+
+    if (alerts.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No active alerts";
+
+        alertslist.appendChild(li);
+        return ;
+    }
+
+    alerts.forEach(alert => {
+        const li = document.createElement("li")
+        li.textContent = alert;
+
+        alertslist.appendChild(li);
+    });
+};
