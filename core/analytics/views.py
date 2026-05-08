@@ -230,7 +230,7 @@ def customer_detail_data_api(request, customer_id):
         "forecast": {
             "next_health_score": forecast_next_health_score(customer),
         },
-        
+
     }
     return Response(data)
 
