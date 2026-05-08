@@ -1,8 +1,10 @@
+let currentPage = 1;
+const pageSize = 20;
 document.addEventListener("DOMContentLoaded", function () {
     const chartCanvas = document.getElementById("mychart");
     const tableBody = document.getElementById("health-records-body");
 
-    fetch("/api/dashboard/")
+    fetch(`/api/dashboard/?page=${currentPage}&page_size=${pageSize}`)
         .then(response => response.json())
         .then(data => {
             const summary = data.summary;
