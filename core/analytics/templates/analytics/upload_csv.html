@@ -1,28 +1,44 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload CSV</title>
+    <title>Upload CSV Data</title>
+
+    <link rel="stylesheet" href="{% static 'analytics/css/upload_csv.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <h1>Upload Customer Events CSV</h1>
-    {% if messages %}
-        {% for message in messages %}
-        <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{form.as_p}}
-        <button type="submit">Upload CSV</button>
-    </form>
 
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+<div class="page-container">
+    <div class="upload-card">
+        <h1>Upload Customer Events CSV</h1>
+
+        <p class="description">
+            Upload a CSV file containing customer events to populate the analytics platform.
+        </p>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit">Upload CSV</button>
+        </form>
+
+        <a class="back-link" href="{% url 'landing_page' %}">
+            ← Back to Landing Page
+        </a>
+    </div>
+</div>
 
 </body>
-
 </html>
