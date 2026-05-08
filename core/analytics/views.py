@@ -157,14 +157,14 @@ def customer_detail_data_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     health = getattr(customer, "health", None)
     events = customer.usage_events.all()
-    
+
     # in case a time range is requested
     selected_range = request.GET.get("range", "30")
     if selected_range != "all":
         days = int(selected_range)
         start_date = timezone.now() - timedelta(days=days)
         events = events.filter(timestamp__gte=start_date)
-        
+
     event_distribution = (
         events.values("event_type").annotate(count=Count("id")).order_by("event_type")
     )
@@ -243,11 +243,20 @@ def ml_feature_importance_api(request):
             {
                 "detail": "Not enough data to train model",
             },
-            status=400
+            status=400,
         )
-    return Response(
-        {
-            "feature_importance": importance
-        }
-    )
-    
+    return Response({"feature_importance": importance})
+
+
+# customer health history API from snapshots
+@api_view(["GET"])
+def customer_health_history_api(request, customer_id):
+    customer = get_object_or_404(Customer, id=customer_id)
+    snapshots = customer.health_snapshots.all().order_by("created_at")
+    data = {
+        "labels": [snapshot.created_at.strftime("%Y-%m-%d %H:%M") for snapshot in snapshots],
+        "health_scores": [snapshot.health_score for snapshot in snapshots],
+        "churn_risks": [snapshot.churn_risk for snapshot in snapshots],
+        "ml_churn_probabilities": [snapshot.ml_churn_probability for snapshot in snapshots]
+    }
+    return Response(data)
