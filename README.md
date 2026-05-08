@@ -1,12 +1,18 @@
 
 
-# Atlassian App Analytics
+# 🚀 Atlassian App Analytics
+
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![Django](https://img.shields.io/badge/Django-5.x-green?logo=django)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)
+![JavaScript](https://img.shields.io/badge/Frontend-JavaScript-yellow?logo=javascript)
+![Chart.js](https://img.shields.io/badge/Charts-Chart.js-orange)
+![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-f7931e?logo=scikitlearn)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 Customer Behaviour Analytics Platform for Atlassian Marketplace Apps.
 
-## Overview
+## 📖 Overview
 
 Atlassian App Analytics is a Django-based analytics prototype for understanding customer behaviour, product adoption, churn risk, and customer health for Atlassian Marketplace-style apps.
 
@@ -26,7 +32,7 @@ The project combines:
 
 The goal is to demonstrate how product usage data can be transformed into actionable customer intelligence.
 
-## Motivation
+## 🏢 Motivation
 
 Atlassian Marketplace vendors often serve many customers across Jira and Confluence apps. As usage grows, product teams need ways to answer questions such as:
 
@@ -39,7 +45,7 @@ Atlassian Marketplace vendors often serve many customers across Jira and Conflue
 
 This project simulates an analytics platform that helps answer these questions using event data, health scoring, machine learning, and interactive dashboards.
 
-## Inspired by codefortynine
+## 💡 Inspired by codefortynine
 
 This project is inspired by the type of apps built by codefortynine GmbH, an Atlassian Marketplace vendor based in Karlsruhe.
 
@@ -53,9 +59,9 @@ The prototype is designed around the idea of analyzing customer behaviour for At
 
 The project is not affiliated with codefortynine. It is a portfolio/demo project designed to show product thinking, backend engineering, frontend development, analytics, and applied machine learning.
 
-## Key Features
+## ✨ Key Features
 
-### 1. Landing Page
+### 1. 🏠 Landing Page
 
 The project includes a landing page that explains:
 
@@ -64,7 +70,7 @@ The project includes a landing page that explains:
 - connection to Atlassian Marketplace apps
 - what the prototype does
 
-### 2. API-driven Dashboard
+### 2. 📊 API-driven Dashboard
 
 The dashboard is rendered as an HTML shell and populated through JavaScript API calls.
 
@@ -84,7 +90,7 @@ It displays:
 
 The customer health table uses pagination so only a limited number of rows are loaded at a time.
 
-### 3. Customer Detail Page
+### 3. 👤 Customer Detail Page
 
 Each customer has an API-driven detail page showing:
 
@@ -105,7 +111,7 @@ Each customer has an API-driven detail page showing:
 - health history chart
 - recent events table
 
-### 4. Customer Health Scoring
+### 4. 📈 Customer Health Scoring
 
 Each customer receives a health score based on:
 
@@ -132,7 +138,7 @@ The score is converted into risk labels:
 0–49   → High Risk
 ```
 
-### 5. Event Analytics
+### 5. 📉 Event Analytics
 
 Customer behaviour is tracked using usage events such as:
 
@@ -153,7 +159,7 @@ The app visualizes:
 - events over time
 - recent events per customer
 
-### 6. Machine Learning Churn Prediction
+### 6. 🤖 Machine Learning Churn Prediction
 
 The project includes a machine learning pipeline using scikit-learn.
 
@@ -174,7 +180,7 @@ The app stores:
 - model accuracy
 - feature importance
 
-### 7. Feature Importance
+### 7. 🔍 Feature Importance
 
 The dashboard explains which features influence churn prediction.
 
@@ -186,7 +192,7 @@ support_score            → increases churn risk
 feature_adoption_score   → decreases churn risk
 ```
 
-### 8. Health History
+### 8. 📜 Health History
 
 The system stores historical snapshots of customer health.
 
@@ -204,7 +210,7 @@ Each snapshot includes:
 
 This allows the app to show customer health trends over time.
 
-### 9. Automated Insights
+### 9. 💬 Automated Insights
 
 The app generates plain-English insights from historical health data.
 
@@ -216,7 +222,7 @@ ML churn probability increased by 18%.
 Customer is currently in a high-risk health range.
 ```
 
-### 10. Alerts
+### 10. 🚨 Alerts
 
 The platform generates alerts when customer risk signals become serious.
 
@@ -229,7 +235,7 @@ Customer is currently classified as high risk.
 ML model predicts extremely high churn probability.
 ```
 
-### 11. Forecasting
+### 11. 🔮 Forecasting
 
 The project includes a simple health-score forecast based on recent historical trend.
 
@@ -241,7 +247,7 @@ average recent change = -6
 forecast next health score = 48
 ```
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 ### Backend
 
@@ -263,7 +269,7 @@ forecast next health score = 48
 - scikit-learn
 - joblib
 
-## Architecture
+## 🏗️ Architecture
 
 ```text
 PostgreSQL
@@ -281,7 +287,7 @@ JavaScript Frontend
 Charts, Tables, Insights, Alerts
 ```
 
-## Main Django Apps / Files
+## 📂 Main Django Apps / Files
 
 ```text
 analytics/
@@ -310,7 +316,7 @@ analytics/
         └── update_ml_churn.py
 ```
 
-## Core Models
+## 🧱 Core Models
 
 ### Customer
 
@@ -328,7 +334,7 @@ Stores the latest customer health metrics and churn risk.
 
 Stores historical health snapshots over time.
 
-## API Endpoints
+## 📡 API Endpoints
 
 Example endpoints:
 
@@ -348,7 +354,7 @@ GET /api/ml/metrics/
 GET /api/ml/feature-importance/
 ```
 
-## Management Commands
+## ⚙️ Management Commands
 
 Update rule-based customer health:
 
@@ -368,7 +374,7 @@ Run both through the helper script:
 ./update_analytics.sh
 ```
 
-## Bash Script
+## 🐚 Bash Script
 
 Example `update_analytics.sh`:
 
@@ -384,7 +390,7 @@ python manage.py update_ml_churn
 echo "Analytics update complete."
 ```
 
-## Running the Project
+## 🚀 Running the Project
 
 ### 1. Clone repository
 
@@ -456,7 +462,7 @@ Open:
 http://127.0.0.1:8000/
 ```
 
-## Demo Workflow
+## 🎬 Demo Workflow
 
 A typical demo flow:
 
@@ -469,7 +475,7 @@ A typical demo flow:
 7. Inspect event distribution and time-series charts.
 8. Run update commands to refresh analytics and ML probabilities.
 
-## Machine Learning Notes
+## 🧠 Machine Learning Notes
 
 This project demonstrates an end-to-end ML workflow:
 
@@ -491,7 +497,7 @@ API + frontend display
 
 The current model is intentionally simple and explainable.
 
-## Limitations
+## ⚠️ Limitations
 
 This is a prototype and portfolio project.
 
@@ -508,7 +514,7 @@ Current limitations:
 
 In a production system, churn labels should come from real subscription outcomes such as cancellations, non-renewals, downgrades, or long-term inactivity.
 
-## Future Improvements
+## 🔮 Future Improvements
 
 Possible next steps:
 
@@ -525,7 +531,7 @@ Possible next steps:
 - React frontend migration
 - Scheduled jobs using cron or Celery
 
-## Why This Project Matters
+## 🎯 Why This Project Matters
 
 This project demonstrates the ability to combine:
 
@@ -541,16 +547,15 @@ This project demonstrates the ability to combine:
 
 It is designed to show how raw product usage data can become actionable customer intelligence.
 
-## Author
+## 👨‍💻 Author
 
 Dr. Joseph Njeri
 
 Data scientist with experience in teaching, applied analytics, and building practical data products.
 
-## License
+## 📄 License
 
 MIT
-
 ## Screenshots
 
 ### Landing Page
