@@ -288,8 +288,45 @@ Show in dashboard
 - Add model loader and create logic for using pretrained model or train it if it doesn't exist
 
 
+- Another feature to add to the app is the customer health history and trend
+    - We add health-score history so each customer can show how their risk changes over time, not just the latest score
+    - We shall add a new model `CustomerHealthSnapshot`
+    - Every time we calculate customer health, a health snapshot for a customer is created
+    - We define a function `create_customer_health_snapshot` in `services.py` to capture a health snapshot every time customer health is calculated using `calculate_customer_health`
+    - At this point, we have moved from current-state-analytics to historical analytics - time series customer intelligence which is the foundation for:
+        - trend analysis
+        - forecasting
+        - anomaly detection
+        - retention analysis
+        - longitudinal Machine Learning
+- The next step is to expose the snapshot through an API endpoint
+- Once that is done, we can then render the history on frontend
+- Our system can now answer:
 
+    - What is the customer’s current health?
 
+    - How has it changed over time?
+
+    - Is risk improving or worsening?
+
+    - Is ML risk increasing?
+
+- We want to have multi-line trend chart showing health score, rule-based churn risk and ML churn probability. We add that to the customer detail page.
+
+- So far we have:
+    - analytics backend
+    - REST APIs
+    - dynamic frontend
+    - historical tracking
+    - time-series visualization
+    - ML predictions
+    - model evaluation
+    - feature importance
+    - trend analytics
+
+- We generate automatic customer insights from trend data by creating an insight generator inside services. The function is `generate_health_insights(customer)`
+
+- We then expose the above insights through an API endpoint to show in frontend
 
 
 
