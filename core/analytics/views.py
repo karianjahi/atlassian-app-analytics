@@ -8,6 +8,7 @@ from .models import Customer, CustomerHealth
 from analytics.services import (
     generate_risk_reasons,
     generate_recommended_actions,
+    generate_health_insights,
 )
 
 # for api
@@ -175,7 +176,7 @@ def customer_detail_data_api(request, customer_id):
         .annotate(count=Count("id"))
         .order_by("event_date")
     )
-    # print(event_distribution)
+    
     data = {
         "customer": {
             "id": customer_id,
@@ -200,6 +201,9 @@ def customer_detail_data_api(request, customer_id):
                 "risk_label": health.get_risk_label_display(),
             }
         ),
+        
+        "health_insights": generate_health_insights(customer),
+        
         "events": [
             {
                 "event_type": event.event_type,
@@ -220,6 +224,7 @@ def customer_detail_data_api(request, customer_id):
         },
         "risk_reasons": generate_risk_reasons(customer),
         "recommended_actions": generate_recommended_actions(customer),
+        
     }
     return Response(data)
 
@@ -260,3 +265,5 @@ def customer_health_history_api(request, customer_id):
         "ml_churn_probabilities": [snapshot.ml_churn_probability for snapshot in snapshots]
     }
     return Response(data)
+
+
