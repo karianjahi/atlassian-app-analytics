@@ -28,6 +28,7 @@ function loadCustomerDetail(customerId, selectedRange) {
             renderLists(data.risk_reasons, data.recommended_actions);
             renderInsights(data.health_insights);
             renderAlerts(data.alerts);
+            renderForecast(data.forecast);
             renderCharts(data.event_distribution, data.events_over_time);
             renderEventsTable(data.events);
         })
@@ -307,3 +308,18 @@ function renderAlerts(alerts) {
         alertsList.appendChild(li);
     });
 }
+
+function renderForecast(forecast) {
+    const forecastElement = document.getElementById("forecast-health-score");
+
+    if (!forecastElement) {
+        return ;
+    }
+
+    if (!forecast || forecast.next_health_score === null) {
+        forecast.textContent = "Not enough historical data";
+        return
+    }
+
+    forecastElement.textContent = forecast.next_health_score
+};
