@@ -9,6 +9,7 @@ from analytics.services import (
     generate_risk_reasons,
     generate_recommended_actions,
     generate_health_insights,
+    generate_customer_alerts,
 )
 
 # for api
@@ -202,7 +203,6 @@ def customer_detail_data_api(request, customer_id):
             }
         ),
         
-        "health_insights": generate_health_insights(customer),
         
         "events": [
             {
@@ -224,7 +224,8 @@ def customer_detail_data_api(request, customer_id):
         },
         "risk_reasons": generate_risk_reasons(customer),
         "recommended_actions": generate_recommended_actions(customer),
-        
+        "health_insights": generate_health_insights(customer),
+        "alerts": generate_customer_alerts(customer),
     }
     return Response(data)
 
