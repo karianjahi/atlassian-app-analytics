@@ -26,6 +26,7 @@ function loadCustomerDetail(customerId, selectedRange) {
             renderCustomerInfo(data.customer);
             renderHealth(data.health);
             renderLists(data.risk_reasons, data.recommended_actions);
+            renderInsights(data.health_insights)
             renderCharts(data.event_distribution, data.events_over_time);
             renderEventsTable(data.events);
         })
@@ -263,3 +264,20 @@ function renderHealthHistoryChart(data) {
         }
     });
 };
+
+function renderInsights(insights) {
+    const insightsList = document.getElementById("health-insights-list");
+
+    if (!insights) {
+        return ;
+    }
+
+    insightsList.innerHTML = "";
+
+    insights.forEach(insight => {
+        const li = document.createElement("li");
+        li.textContent = insight
+        insightsList.appendChild(li);
+    });
+};
+
