@@ -1,6 +1,26 @@
 let currentPage = 1;
-const pageSize = 20;
+const pageSize = 10;
+let dashboardChartInstance = null;
+
 document.addEventListener("DOMContentLoaded", function () {
+    loadDashboard();
+    loadMlMetrics();
+    loadFeatureImportance();
+
+    document.getElementById("prev-page-btn").addEventListener("click", function () {
+        if (currentPage > 1) {
+            currentPage -= 1;
+            loadDashboard();
+        }
+    });
+
+    document.getElementById("next-page-btn").addEventListener("click", function () {
+        currentPage += 1;
+        loadDashboard();
+    });
+});
+
+function loadDashboard() {
     const chartCanvas = document.getElementById("mychart");
     const tableBody = document.getElementById("health-records-body");
 
@@ -9,8 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             const summary = data.summary;
             const customers = data.customers;
-            renderRiskRankings(data.risk_rankings);
-            renderPagination(data.pagination);
 
             document.getElementById("total-customers").textContent = summary.total_customers;
             document.getElementById("average-health-score").textContent = summary.average_health_score;
@@ -18,87 +36,116 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("watch-count").textContent = summary.watch;
             document.getElementById("high-risk-count").textContent = summary.high_risk;
 
-            new Chart(chartCanvas, {
-                type: "doughnut",
-                data: {
-                    labels: ["Healthy", "Watch", "High Risk"],
-                    datasets: [{
-                        data: [summary.healthy, summary.watch, summary.high_risk],
-                        backgroundColor: ["#2ecc71", "#f1c40f", "#e74c3c"],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const value = context.raw;
-                                    const chartData = context.dataset.data;
-                                    const total = chartData.reduce((sum, val) => sum + val, 0);
-                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-
-                                    return `${context.label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            tableBody.innerHTML = "";
-
-            customers.forEach((customer, index) => {
-                const row = document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>
-                        <a href="/customers/${customer.id}/">
-                            ${customer.company_name}
-                        </a>
-                    </td>
-                    <td>${customer.app_name}</td>
-                    <td>${customer.health_score}</td>
-                    <td>${customer.churn_risk}</td>
-                    <td>${customer.ml_churn_probability}</td>
-                    <td>${customer.risk_label}</td>
-                `;
-
-                tableBody.appendChild(row);
-            });
+            renderDashboardChart(chartCanvas, summary);
+            renderCustomerTable(tableBody, customers, data.pagination);
+            renderPagination(data.pagination);
+            renderRiskRankings(data.risk_rankings);
         })
         .catch(error => {
             console.error("Error loading dashboard data:", error);
         });
+}
 
+function renderDashboardChart(chartCanvas, summary) {
+    if (dashboardChartInstance) {
+        dashboardChartInstance.destroy();
+    }
+
+    dashboardChartInstance = new Chart(chartCanvas, {
+        type: "doughnut",
+        data: {
+            labels: ["Healthy", "Watch", "High Risk"],
+            datasets: [{
+                data: [summary.healthy, summary.watch, summary.high_risk],
+                backgroundColor: ["#2ecc71", "#f1c40f", "#e74c3c"],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const value = context.raw;
+                            const chartData = context.dataset.data;
+                            const total = chartData.reduce((sum, val) => sum + val, 0);
+                            const percentage = total > 0
+                                ? ((value / total) * 100).toFixed(1)
+                                : 0;
+
+                            return `${context.label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderCustomerTable(tableBody, customers, pagination) {
+    tableBody.innerHTML = "";
+
+    customers.forEach((customer, index) => {
+        const row = document.createElement("tr");
+        const rowNumber = (pagination.page - 1) * pagination.page_size + index + 1;
+
+        row.innerHTML = `
+            <td>${rowNumber}</td>
+            <td>
+                <a href="/customers/${customer.id}/">
+                    ${customer.company_name}
+                </a>
+            </td>
+            <td>${customer.app_name}</td>
+            <td>${customer.health_score}</td>
+            <td>${customer.churn_risk}</td>
+            <td>${customer.ml_churn_probability}</td>
+            <td>${customer.risk_label}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+function renderPagination(pagination) {
+    document.getElementById("current-page").textContent = pagination.page;
+    document.getElementById("total-pages").textContent = pagination.total_pages;
+
+    document.getElementById("prev-page-btn").disabled = pagination.page <= 1;
+    document.getElementById("next-page-btn").disabled =
+        pagination.page >= pagination.total_pages;
+}
+
+function loadMlMetrics() {
     fetch("/api/ml/metrics")
         .then(response => response.json())
         .then(metrics => {
-            document.getElementById("ml-accuracy").textContent = `${metrics.accuracy}%`
+            document.getElementById("ml-accuracy").textContent = `${metrics.accuracy}%`;
         })
         .catch(error => {
             console.error("Error loading ML metrics:", error);
             document.getElementById("ml-accuracy").textContent = "N/A";
         });
+}
 
+function loadFeatureImportance() {
     fetch("/api/ml/feature-importance/")
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById("feature-importance-body");
             tableBody.innerHTML = "";
 
-            data.feature_importance.forEach(item => {
-                const featureLabels = {
-                    usage_score: "Usage Score",
-                    feature_adoption_score: "Feature Adoption Score",
-                    reliability_score: "Reliability Score",
-                    support_score: "Support Score",
-                    company_size: "Company Size"
-                };
+            const featureLabels = {
+                usage_score: "Usage Score",
+                feature_adoption_score: "Feature Adoption Score",
+                reliability_score: "Reliability Score",
+                support_score: "Support Score",
+                company_size: "Company Size"
+            };
 
+            data.feature_importance.forEach(item => {
                 const row = document.createElement("tr");
 
                 const interpretation = item.coefficient > 0
@@ -106,10 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "Decreases churn risk";
 
                 row.innerHTML = `
-                <td>${featureLabels[item.feature] || item.feature}</td>
-                <td>${item.coefficient}</td>
-                <td>${interpretation}</td>
-            `;
+                    <td>${featureLabels[item.feature] || item.feature}</td>
+                    <td>${item.coefficient}</td>
+                    <td>${interpretation}</td>
+                `;
 
                 tableBody.appendChild(row);
             });
@@ -117,10 +164,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => {
             console.error("Error loading feature importance:", error);
         });
-});
+}
 
 function renderRiskRankings(rankings) {
-    console.log(rankings)
     const mlBody = document.getElementById("top-ml-risk-body");
     const ruleBody = document.getElementById("top-rule-risk-body");
 
@@ -162,14 +208,4 @@ function renderRiskRankings(rankings) {
 
         ruleBody.appendChild(row);
     });
-}
-
-
-function renderPagination(pagination) {
-    document.getElementById("current-page").textContent = pagination.page;
-    document.getElementById("total-pages").textContent = pagination.total_pages;
-
-    document.getElementById("prev-page-btn").disabled = pagination.page <= 1;
-    document.getElementById("next-page-btn").disabled =
-        pagination.page >= pagination.total_pages;
 }
