@@ -241,6 +241,6 @@ def generate_customer_alerts(customer):
         alerts.append(
             "ML model predicts extremely high churn probability."
         )
-        
+    return alerts
     
         
