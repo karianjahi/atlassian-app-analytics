@@ -231,3 +231,4 @@ core/analytics/migrations/0006_customerhealth_ml_churn_probability.py
 core/analytics/migrations/0007_customerhealthsnapshot.py
 core/analytics/churn_model.joblib
 step-by-step.md
+README-old.md
