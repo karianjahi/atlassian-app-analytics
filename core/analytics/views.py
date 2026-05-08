@@ -126,6 +126,14 @@ def summary_api(request):
 @api_view(["GET"])
 def dashboard_data_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
+    top_risk_customers = (
+        health_records
+        .order_by("-ml_churn_probability")[:5]
+        )
+    
+    top_declining_customers = sorted(
+        health_records, key=lambda record:record.churn_risk, reverse=True
+    )[:5]
 
     data = {
         "summary": {
@@ -150,6 +158,29 @@ def dashboard_data_api(request):
             }
             for record in health_records
         ],
+        
+        "risk_rankings": {
+            "top_ml_risk": [
+                {
+                    "id": record.customer.id,
+                    "company_name": record.customer.company_name,
+                    "app_name": record.customer.app_name,
+                    "ml_churn_probability": record.ml_churn_probability,
+                    "health_score": record.health_score,
+                }
+                for record in top_risk_customers
+            ],
+            "top_rule-based_risk": [
+                {
+                    "id": record.customer.id,
+                    "company_name": record.customer.company_name,
+                    "app_name": record.customer.app_name,
+                    "churn_risk": record.churn_risk,
+                    "health_score": record.health_score,
+                } 
+                for record in top_declining_customers
+            ]
+        }
     }
 
     return Response(data)
@@ -178,7 +209,7 @@ def customer_detail_data_api(request, customer_id):
         .annotate(count=Count("id"))
         .order_by("event_date")
     )
-    
+
     data = {
         "customer": {
             "id": customer_id,
@@ -203,8 +234,6 @@ def customer_detail_data_api(request, customer_id):
                 "risk_label": health.get_risk_label_display(),
             }
         ),
-        
-        
         "events": [
             {
                 "event_type": event.event_type,
@@ -230,7 +259,6 @@ def customer_detail_data_api(request, customer_id):
         "forecast": {
             "next_health_score": forecast_next_health_score(customer),
         },
-
     }
     return Response(data)
 
@@ -265,11 +293,13 @@ def customer_health_history_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     snapshots = customer.health_snapshots.all().order_by("created_at")
     data = {
-        "labels": [snapshot.created_at.strftime("%Y-%m-%d %H:%M") for snapshot in snapshots],
+        "labels": [
+            snapshot.created_at.strftime("%Y-%m-%d %H:%M") for snapshot in snapshots
+        ],
         "health_scores": [snapshot.health_score for snapshot in snapshots],
         "churn_risks": [snapshot.churn_risk for snapshot in snapshots],
-        "ml_churn_probabilities": [snapshot.ml_churn_probability for snapshot in snapshots]
+        "ml_churn_probabilities": [
+            snapshot.ml_churn_probability for snapshot in snapshots
+        ],
     }
     return Response(data)
-
-
