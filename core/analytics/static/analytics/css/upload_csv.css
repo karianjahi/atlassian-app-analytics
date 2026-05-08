@@ -1,0 +1,112 @@
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f4f5f7;
+    color: #172b4d;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 0 1rem;
+}
+
+.upload-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 24px rgba(9, 30, 66, 0.08);
+}
+
+.upload-card h1 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #172b4d;
+}
+
+.upload-card p.description {
+    text-align: center;
+    color: #5e6c84;
+    margin-bottom: 2rem;
+}
+
+.upload-card form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.upload-card label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #344563;
+}
+
+.upload-card input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin: 1rem 0;
+    border: 1px solid #dfe1e6;
+    border-radius: 8px;
+    background: #fafbfc;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.upload-card button[type="submit"] {
+    width: 100%;
+    padding: 0.9rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #0052cc;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.upload-card button[type="submit"]:hover {
+    background-color: #0747a6;
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.messages li {
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    background-color: #e3fcef;
+    color: #006644;
+    border: 1px solid #abf5d1;
+    text-align: center;
+    font-weight: 500;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 2rem;
+    color: #0052cc;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        margin: 2rem auto;
+    }
+
+    .upload-card {
+        padding: 1.5rem;
+    }
+}
