@@ -342,8 +342,24 @@ Show in dashboard
 - We then forecast next health score using recent trend
 - We add a `forecast_next_health_score(customer)` function in the services section
 
+- The plaform can now answer the following: 
 
+| Question                     | Capability         |
+| ---------------------------- | ------------------ |
+| What is customer health now? | analytics          |
+| Is risk increasing?          | history + ML       |
+| Why is risk increasing?      | feature importance |
+| What should we do?           | recommendations    |
+| Is intervention urgent?      | alerts             |
+| What may happen next?        | forecasting        |
 
+- Next step involves highlighting riskiest customers on dashboard - dashboard-level risk ranking
+    - we do both
+        - Top ML risk customers
+        - Top rule-based risk customers
+    - We then render in frontend
+
+- Since the dashboard can become overwhelming with increase in customers, we paginate it
 
     
     

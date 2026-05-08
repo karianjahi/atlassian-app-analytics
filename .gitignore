@@ -229,3 +229,5 @@ core/analytics/migrations/0004_alter_usageevent_customer.py
 core/analytics/migrations/0005_customerhealth_did_churn.py
 core/analytics/migrations/0006_customerhealth_ml_churn_probability.py
 core/analytics/migrations/0007_customerhealthsnapshot.py
+core/analytics/churn_model.joblib
+step-by-step.md
