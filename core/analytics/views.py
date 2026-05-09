@@ -164,7 +164,7 @@ def upload_csv(request):
             CSVUploadLog.objects.create(
                 file_name = csv_file.name,
                 events_created = events_created,
-                customers_created = customer,
+                customers_created = customers_created,
                 duplicates_skipped = duplicates_skipped,
                 invalid_rows_skipped = invalid_rows_skipped,
             )
