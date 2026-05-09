@@ -1,13 +1,16 @@
-# We need to calculate customer health from the data available in the database
-
 from datetime import timedelta
+
 from django.utils import timezone
+
 from .models import Customer, CustomerHealth, CustomerHealthSnapshot
 
-ALPHA = 0.4  # usage
-BETA = 0.25  # feature adoption
-GAMMA = 0.20  # reliability
-DELTA = 0.15  # support
+
+ALPHA = 0.4
+BETA = 0.25
+GAMMA = 0.20
+DELTA = 0.15
+
+DAYS_FOR_RECENT_ACTIVITY = 30
 
 FEATURE_EVENTS = [
     "created_clone",
@@ -15,41 +18,35 @@ FEATURE_EVENTS = [
     "connected_external_data_source",
 ]
 
+HEALTHY_THRESHOLD = 80
+WATCH_THRESHOLD = 50
+HIGH_RISK_CHURN_THRESHOLD = 40
+
 
 def calculate_customer_health(customer: Customer) -> CustomerHealth:
-    # Get the earliest date to consider (last 30 days)
     now = timezone.now()
-    last_30_days = now - timedelta(days=30)
+    last_30_days = now - timedelta(days=DAYS_FOR_RECENT_ACTIVITY)
 
-    # Get all events associated with this customer
     events = customer.usage_events.all()
-
-    # only events in the last 30 days
     recent_events = events.filter(timestamp__gte=last_30_days)
+
     total_recent_events = recent_events.count()
     error_count = recent_events.filter(event_type="sync_failed").count()
     support_count = recent_events.filter(event_type="opened_support_ticket").count()
 
-    # Lets get the unique features used based on usage events for this customer
     unique_features_used = (
         recent_events.filter(event_type__in=FEATURE_EVENTS)
         .values("event_type")
-        .order_by()  # this removes ordering before calling distinct
+        .order_by()
         .distinct()
         .count()
     )
 
-    # Get the scores
-    usage_score = min(
-        total_recent_events * 5, 100
-    )  # usage is no of events x 5 or 100 whichever is smaller
+    usage_score = min(total_recent_events * 5, 100)
     feature_adoption_score = (unique_features_used / len(FEATURE_EVENTS)) * 100
-    reliability_score = max(100 - error_count * 15, 0)  # Penalizes fails
-    support_score = max(
-        100 - support_count * 20, 0
-    )  # if no support, then perfect. if support, magnify the problem
+    reliability_score = max(100 - error_count * 15, 0)
+    support_score = max(100 - support_count * 20, 0)
 
-    # calculate health score for this customer
     health_score = (
         ALPHA * usage_score
         + BETA * feature_adoption_score
@@ -57,22 +54,17 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
         + DELTA * support_score
     )
 
-    # Determine the risk label
-    if health_score >= 80:
+    if health_score >= HEALTHY_THRESHOLD:
         risk_label = "healthy"
-    elif health_score >= 50:
+    elif health_score >= WATCH_THRESHOLD:
         risk_label = "watch"
     else:
         risk_label = "high_risk"
 
-    # Determine the churn label
-    did_churn = health_score < 40
+    did_churn = health_score < HIGH_RISK_CHURN_THRESHOLD
+    churn_risk = 100 - health_score
 
-    # What is the churn risk for this customer
-    churn_risk = 100 - health_score  # higher churn risk for low customer health
-
-    # Update the customer health model (table)
-    customer_health, created = CustomerHealth.objects.update_or_create(
+    customer_health, _ = CustomerHealth.objects.update_or_create(
         customer=customer,
         defaults={
             "usage_score": round(usage_score, 2),
@@ -85,20 +77,21 @@ def calculate_customer_health(customer: Customer) -> CustomerHealth:
             "did_churn": did_churn,
         },
     )
+
     create_customer_health_snapshot(customer_health)
+
     return customer_health
 
 
-# Calculate customer health for all customers
-
-
 def calculate_customer_health_for_all_customers():
-    # Get all customers (as in the whole customer table)
     customers = Customer.objects.all()
+
     results = []
+
     for customer in customers:
         customer_health = calculate_customer_health(customer)
         results.append(customer_health)
+
     return results
 
 
@@ -127,11 +120,13 @@ def generate_risk_reasons(customer: Customer):
 
     if not reasons:
         reasons.append("Customer appears healthy based on current signals")
+
     return reasons
 
 
 def generate_recommended_actions(customer: Customer):
     health = getattr(customer, "health", None)
+
     if not health:
         return ["Calculate customer health before recommending actions."]
 
@@ -158,9 +153,8 @@ def generate_recommended_actions(customer: Customer):
     return actions
 
 
-# Create a healthy snapshot
 def create_customer_health_snapshot(customer_health: CustomerHealth):
-    snapshot = CustomerHealthSnapshot.objects.create(
+    return CustomerHealthSnapshot.objects.create(
         customer=customer_health.customer,
         usage_score=customer_health.usage_score,
         feature_adoption_score=customer_health.feature_adoption_score,
@@ -171,14 +165,13 @@ def create_customer_health_snapshot(customer_health: CustomerHealth):
         ml_churn_probability=customer_health.ml_churn_probability,
         risk_label=customer_health.risk_label,
     )
-    return snapshot
 
 
-def generate_health_insights(customer):
+def generate_health_insights(customer: Customer):
     snapshots = customer.health_snapshots.order_by("created_at")
 
     if snapshots.count() < 2:
-        return ["Not enough historical data to generate insights"]
+        return ["Not enough historical data to generate insights."]
 
     first = snapshots.first()
     latest = snapshots.last()
@@ -189,30 +182,33 @@ def generate_health_insights(customer):
 
     if health_change > 0:
         insights.append(
-            f"Health score improved by {round(health_change, 2)} points over time"
+            f"Health score improved by {round(health_change, 2)} points over time."
         )
     elif health_change < 0:
         insights.append(
             f"Health score declined by {round(abs(health_change), 2)} points over time."
         )
     else:
-        insights.append("Health Score remained stable over time")
+        insights.append("Health score remained stable over time.")
+
     ml_change = latest.ml_churn_probability - first.ml_churn_probability
 
     if ml_change > 0:
-        insights.append(f"ML churn probability increased by {round(ml_change, 2)}%.")
+        insights.append(
+            f"ML churn probability increased by {round(ml_change, 2)}%."
+        )
     elif ml_change < 0:
         insights.append(
             f"ML churn probability decreased by {round(abs(ml_change), 2)}%."
         )
 
-    if latest.health_score < 40:
+    if latest.health_score < HIGH_RISK_CHURN_THRESHOLD:
         insights.append("Customer is currently in a high-risk health range.")
 
     return insights
 
 
-def generate_customer_alerts(customer):
+def generate_customer_alerts(customer: Customer):
     snapshots = customer.health_snapshots.order_by("created_at")
 
     if snapshots.count() < 2:
@@ -224,43 +220,33 @@ def generate_customer_alerts(customer):
     alerts = []
 
     health_drop = first.health_score - latest.health_score
-    
+
     if health_drop >= 15:
         alerts.append(f"Health score dropped by {round(health_drop, 2)} points.")
-    
-    ml_increase = (latest.ml_churn_probability - first.ml_churn_probability)
+
+    ml_increase = latest.ml_churn_probability - first.ml_churn_probability
+
     if ml_increase >= 20:
         alerts.append(
-        f"ML churn probability increased by {round(ml_increase, 2)}%."
-    )
-        
-    if latest.health_score < 40:
-        alerts.append("Customer is currently classified as high risk.")
-        
-    if latest.ml_churn_probability >= 80:
-        alerts.append(
-            "ML model predicts extremely high churn probability."
+            f"ML churn probability increased by {round(ml_increase, 2)}%."
         )
+
+    if latest.health_score < HIGH_RISK_CHURN_THRESHOLD:
+        alerts.append("Customer is currently classified as high risk.")
+
+    if latest.ml_churn_probability >= 80:
+        alerts.append("ML model predicts extremely high churn probability.")
+
     return alerts
 
 
-def forecast_next_health_score(customer):
-    """_summary_
-    looks at the last few health snapshots and estimates:
-    next health score = latest score + average recent change
-    
-    Example:
-    70 → 65 → 60
-    average change = -5
-    forecast = 55
-    """
+def forecast_next_health_score(customer: Customer):
     snapshots = customer.health_snapshots.order_by("created_at")
 
     if snapshots.count() < 2:
         return None
 
-    recent_snapshots = snapshots.order_by("-created_at")[:5]
-    recent_snapshots = list(recent_snapshots)[::-1]
+    recent_snapshots = list(snapshots.order_by("-created_at")[:5])[::-1]
 
     if len(recent_snapshots) < 2:
         return None
@@ -270,13 +256,9 @@ def forecast_next_health_score(customer):
 
     score_change = latest.health_score - first.health_score
     number_of_steps = len(recent_snapshots) - 1
-
     average_change = score_change / number_of_steps
 
     forecast = latest.health_score + average_change
-
     forecast = max(0, min(100, forecast))
 
     return round(forecast, 2)
-    
-        
