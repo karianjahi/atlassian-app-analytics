@@ -9,34 +9,86 @@
     <link rel="stylesheet" href="{% static 'analytics/css/upload_csv.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 <div class="page-container">
     <div class="upload-card">
+
         <h1>Upload Customer Events CSV</h1>
 
         <p class="description">
-            Upload a CSV file containing customer events to populate the analytics platform.
+            Upload a CSV file containing customer records and usage events.
+            The file must include customer details, installation date, event type,
+            event timestamp, and metadata.
         </p>
 
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
-                    <li>{{ message }}</li>
+                    <li class="{{ message.tags }}">
+                        {{ message }}
+                    </li>
                 {% endfor %}
             </ul>
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data">
+        {% if form.errors %}
+            <div class="form-errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="upload-form">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="form-field">
+                {{ form.csv_file.label_tag }}
+                {{ form.csv_file }}
+            </div>
 
             <button type="submit">Upload CSV</button>
         </form>
 
-        <a class="back-link" href="{% url 'landing_page' %}">
-            ← Back to Landing Page
-        </a>
+        <div class="upload-help">
+            <h2>Required CSV Columns</h2>
+
+            <ul>
+                <li><code>company_name</code></li>
+                <li><code>app_name</code></li>
+                <li><code>country</code></li>
+                <li><code>company_size</code></li>
+                <li><code>license_tier</code></li>
+                <li><code>installed_at</code></li>
+                <li><code>event_type</code></li>
+                <li><code>timestamp</code></li>
+                <li><code>metadata</code></li>
+            </ul>
+
+            <p>
+                <strong>Note:</strong> <code>installed_at</code> is required for every upload.
+                It represents when the customer installed the app.
+            </p>
+        </div>
+
+        <div class="page-actions">
+            <a class="back-link" href="{% url 'landing_page' %}">
+                ← Back to Landing Page
+            </a>
+
+            <a class="back-link" href="{% url 'dashboard' %}">
+                Go to Dashboard →
+            </a>
+        </div>
+
     </div>
 </div>
 

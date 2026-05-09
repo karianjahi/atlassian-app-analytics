@@ -7,14 +7,14 @@ body {
 }
 
 .page-container {
-    max-width: 800px;
+    max-width: 820px;
     margin: 4rem auto;
     padding: 0 1rem;
 }
 
 .upload-card {
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 2.5rem;
     box-shadow: 0 8px 24px rgba(9, 30, 66, 0.08);
 }
@@ -26,29 +26,34 @@ body {
     color: #172b4d;
 }
 
-.upload-card p.description {
+.description {
     text-align: center;
     color: #5e6c84;
-    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 650px;
+    margin: 0 auto 2rem;
 }
 
-.upload-card form {
-    max-width: 500px;
+.upload-form {
+    max-width: 520px;
     margin: 0 auto;
 }
 
-.upload-card label {
+.form-field {
+    margin-bottom: 1.25rem;
+}
+
+.form-field label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     font-weight: 600;
     color: #344563;
 }
 
-.upload-card input[type="file"] {
+.form-field input[type="file"] {
     display: block;
     width: 100%;
-    padding: 0.75rem;
-    margin: 1rem 0;
+    padding: 0.85rem;
     border: 1px solid #dfe1e6;
     border-radius: 8px;
     background: #fafbfc;
@@ -56,7 +61,7 @@ body {
     font-family: inherit;
 }
 
-.upload-card button[type="submit"] {
+.upload-form button[type="submit"] {
     width: 100%;
     padding: 0.9rem 1.25rem;
     border: none;
@@ -66,10 +71,9 @@ body {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
-.upload-card button[type="submit"]:hover {
+.upload-form button[type="submit"]:hover {
     background-color: #0747a6;
 }
 
@@ -82,16 +86,92 @@ body {
 .messages li {
     padding: 0.85rem 1rem;
     border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
     background-color: #e3fcef;
     color: #006644;
     border: 1px solid #abf5d1;
+}
+
+.messages li.error {
+    background-color: #ffebe6;
+    color: #bf2600;
+    border: 1px solid #ffbdad;
+}
+
+.messages li.warning {
+    background-color: #fff7d6;
+    color: #7a5d00;
+    border: 1px solid #ffe380;
+}
+
+.messages li.info {
+    background-color: #deebff;
+    color: #0747a6;
+    border: 1px solid #b3d4ff;
+}
+
+.form-errors {
+    margin-bottom: 1.5rem;
+}
+
+.form-errors p {
+    margin: 0.5rem 0;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    background-color: #ffebe6;
+    color: #bf2600;
+    border: 1px solid #ffbdad;
     text-align: center;
     font-weight: 500;
 }
 
-.back-link {
-    display: inline-block;
+.upload-help {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background-color: #f8f9fb;
+    border: 1px solid #dfe1e6;
+    border-radius: 10px;
+}
+
+.upload-help h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #172b4d;
+}
+
+.upload-help ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem 1rem;
+    padding-left: 1.2rem;
+}
+
+.upload-help li {
+    color: #344563;
+}
+
+.upload-help code {
+    background-color: #ebecf0;
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+}
+
+.upload-help p {
+    color: #5e6c84;
+    line-height: 1.6;
+}
+
+.page-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
     margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.back-link {
     color: #0052cc;
     text-decoration: none;
     font-weight: 600;
@@ -108,5 +188,14 @@ body {
 
     .upload-card {
         padding: 1.5rem;
+    }
+
+    .upload-help ul {
+        grid-template-columns: 1fr;
+    }
+
+    .page-actions {
+        flex-direction: column;
+        align-items: center;
     }
 }
