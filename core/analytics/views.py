@@ -161,7 +161,7 @@ def upload_csv(request):
                     f"Imported {events_created} events. "
                     f"Created {customers_created} new customers. "
                     f"Skipped {skipped_rows} rows.",
-                    "and refreshed analytics"
+                    "Analytics and ML predictions refreshed."
                 )
             )
 
