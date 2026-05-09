@@ -227,3 +227,5 @@ core/analytics/churn_model.joblib
 step-by-step.md
 README-old.md
 step-by-step.md
+*csv
+*joblib
