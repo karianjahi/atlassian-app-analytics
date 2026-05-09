@@ -226,3 +226,4 @@ core/analytics/migrations/00*py
 core/analytics/churn_model.joblib
 step-by-step.md
 README-old.md
+step-by-step.md
