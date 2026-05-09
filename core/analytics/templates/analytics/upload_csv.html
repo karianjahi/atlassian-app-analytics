@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,85 +13,100 @@
 
 <body>
 
-<div class="page-container">
-    <div class="upload-card">
+    <div class="page-container">
+        <div class="upload-card">
 
-        <h1>Upload Customer Events CSV</h1>
+            <h1>Upload Customer Events CSV</h1>
 
-        <p class="description">
-            Upload a CSV file containing customer records and usage events.
-            The file must include customer details, installation date, event type,
-            event timestamp, and metadata.
-        </p>
+            <p class="description">
+                Upload a CSV file containing customer records and usage events.
+                The file must include customer details, installation date, event type,
+                event timestamp, and metadata.
+            </p>
 
-        {% if messages %}
+            {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
-                    <li class="{{ message.tags }}">
-                        {{ message }}
-                    </li>
+                <li class="{{ message.tags }}">
+                    {{ message }}
+                </li>
                 {% endfor %}
             </ul>
-        {% endif %}
+            {% endif %}
 
-        {% if form.errors %}
+            {% if form.errors %}
             <div class="form-errors">
                 {% for field in form %}
-                    {% for error in field.errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
+                {% for error in field.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
                 {% endfor %}
 
                 {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
-        {% endif %}
+            {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="upload-form">
-            {% csrf_token %}
+            <form method="post" enctype="multipart/form-data" class="upload-form" id="upload-form">
+                {% csrf_token %}
 
-            <div class="form-field">
-                {{ form.csv_file.label_tag }}
-                {{ form.csv_file }}
+                <div class="form-field">
+                    {{ form.csv_file.label_tag }}
+                    {{ form.csv_file }}
+                </div>
+
+                <!-- Add progress UI -->
+                <div class="upload-progress-wrapper hidden" id="upload-progress-wrapper">
+                    <div class="upload-progress-bar">
+                        <div class="upload-progress-fill" id="upload-progress-fill"></div>
+                    </div>
+
+                    <p id="upload-progress-text">Uploading... 0%</p>
+                </div>
+
+
+
+                <button type="submit" id="upload-submit-btn">Upload CSV</button>
+                <p id="processing-message" class="processing-message hidden">
+                    Processing CSV, updating analytics, and refreshing ML predictions...
+                </p>
+            </form>
+
+            <div class="upload-help">
+                <h2>Required CSV Columns</h2>
+
+                <ul>
+                    <li><code>company_name</code></li>
+                    <li><code>app_name</code></li>
+                    <li><code>country</code></li>
+                    <li><code>company_size</code></li>
+                    <li><code>license_tier</code></li>
+                    <li><code>installed_at</code></li>
+                    <li><code>event_type</code></li>
+                    <li><code>timestamp</code></li>
+                    <li><code>metadata</code></li>
+                </ul>
+
+                <p>
+                    <strong>Note:</strong> <code>installed_at</code> is required for every upload.
+                    It represents when the customer installed the app.
+                </p>
             </div>
 
-            <button type="submit">Upload CSV</button>
-        </form>
+            <div class="page-actions">
+                <a class="back-link" href="{% url 'landing_page' %}">
+                    ← Back to Landing Page
+                </a>
 
-        <div class="upload-help">
-            <h2>Required CSV Columns</h2>
+                <a class="back-link" href="{% url 'dashboard' %}">
+                    Go to Dashboard →
+                </a>
+            </div>
 
-            <ul>
-                <li><code>company_name</code></li>
-                <li><code>app_name</code></li>
-                <li><code>country</code></li>
-                <li><code>company_size</code></li>
-                <li><code>license_tier</code></li>
-                <li><code>installed_at</code></li>
-                <li><code>event_type</code></li>
-                <li><code>timestamp</code></li>
-                <li><code>metadata</code></li>
-            </ul>
-
-            <p>
-                <strong>Note:</strong> <code>installed_at</code> is required for every upload.
-                It represents when the customer installed the app.
-            </p>
         </div>
-
-        <div class="page-actions">
-            <a class="back-link" href="{% url 'landing_page' %}">
-                ← Back to Landing Page
-            </a>
-
-            <a class="back-link" href="{% url 'dashboard' %}">
-                Go to Dashboard →
-            </a>
-        </div>
-
     </div>
-</div>
-
+    <script src="{% static 'analytics/js/upload_csv.js' %}"></script>
 </body>
+
 </html>
