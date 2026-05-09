@@ -63,7 +63,7 @@ from django.shortcuts import render, redirect
 from django.utils.dateparse import parse_datetime
 
 from .forms import CSVUploadForm
-from .models import Customer, UsageEvent
+from .models import Customer, UsageEvent, CSVUploadLog
 
 
 def upload_csv(request):
@@ -160,7 +160,15 @@ def upload_csv(request):
             # calculate customer health  and update ml churn
             call_command("update_customer_health")
             call_command("update_ml_churn")
-
+            
+            CSVUploadLog.objects.create(
+                file_name = csv_file.name,
+                events_created = events_created,
+                customers_created = customer,
+                duplicates_skipped = duplicates_skipped,
+                invalid_rows_skipped = invalid_rows_skipped,
+            )
+            
             messages.success(
                 request,
                 (
