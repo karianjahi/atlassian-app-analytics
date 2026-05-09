@@ -103,7 +103,8 @@ def upload_csv(request):
 
             customers_created = 0
             events_created = 0
-            skipped_rows = 0
+            duplicates_skipped = 0
+            invalid_rows_skipped = 0
 
             for index, row in df.iterrows():
                 try:
@@ -139,12 +140,11 @@ def upload_csv(request):
                         event_type=row["event_type"],
                         timestamp=event_timestamp,
                     ).exists()
-                    
-                    
+
                     if event_exists:
-                        skipped_rows += 1
+                        duplicates_skipped += 1
                         continue
-                    
+
                     UsageEvent.objects.create(
                         customer=customer,
                         event_type=row["event_type"],
@@ -155,7 +155,7 @@ def upload_csv(request):
                     events_created += 1
 
                 except Exception:
-                    skipped_rows += 1
+                    invalid_rows_skipped += 1
 
             # calculate customer health  and update ml churn
             call_command("update_customer_health")
@@ -164,10 +164,12 @@ def upload_csv(request):
             messages.success(
                 request,
                 (
+                    f"Upload complete. "
                     f"Imported {events_created} events. "
-                    f"Created {customers_created} new customers. "
-                    f"Skipped {skipped_rows} rows.",
-                    "Analytics and ML predictions refreshed.",
+                    f"Created {customers_created} customers. "
+                    f"Skipped {duplicates_skipped} duplicate events. "
+                    f"Skipped {invalid_rows_skipped} invalid rows. "
+                    "Analytics and ML predictions refreshed."
                 ),
             )
 
