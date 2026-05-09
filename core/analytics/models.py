@@ -104,3 +104,14 @@ class CustomerHealthSnapshot(models.Model):
         return (
             f"{self.customer.company_name} - {self.health_score} at {self.created_at}"
         )
+
+class CSVUploadLog(models.log):
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    file_name = models.CharField(max_length=255)
+    events_created = models.PositiveIntegerField(default=0)
+    customers_created = models.PositiveIntegerField(default=0)
+    duplicates_skipped = models.PositiveIntegerField(default=0)
+    invalid_rows_skipped = models.PositiveIntegerField(default=0)
+    
+    def __str__(self):
+        return f"{self.file} uploaded at {self.uploaded_at}"
