@@ -227,3 +227,14 @@ core/analytics/churn_model.joblib
 step-by-step.md
 README-old.md
 step-by-step.md
+
+
+venv/
+.env
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+media/
+*.joblib
+.DS_Store
