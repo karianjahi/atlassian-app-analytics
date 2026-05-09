@@ -173,7 +173,7 @@ def upload_csv(request):
                 ),
             )
 
-            return redirect("landing_page")
+            return redirect("upload_csv")
 
     else:
         form = CSVUploadForm()
