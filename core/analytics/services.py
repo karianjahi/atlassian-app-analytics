@@ -2,7 +2,7 @@
 
 from datetime import timedelta
 from django.utils import timezone
-from .models import Customer, CustomerHealth, UsageEvent, CustomerHealthSnapshot
+from .models import Customer, CustomerHealth, CustomerHealthSnapshot
 
 ALPHA = 0.4  # usage
 BETA = 0.25  # feature adoption
