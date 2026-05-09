@@ -1,6 +1,7 @@
 import json
 import pandas as pd
-pd.set_option('display.max_columns', None)
+
+pd.set_option("display.max_columns", None)
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.db.models import Count, Avg
@@ -75,10 +76,7 @@ def upload_csv(request):
             try:
                 df = pd.read_csv(csv_file, sep=",", quotechar='"')
             except Exception as error:
-                messages.error(
-                    request,
-                    f"Could not read CSV file: {error}"
-                )
+                messages.error(request, f"Could not read CSV file: {error}")
                 return redirect("upload_csv")
 
             required_columns = [
@@ -94,14 +92,12 @@ def upload_csv(request):
             ]
 
             missing_columns = [
-                column for column in required_columns
-                if column not in df.columns
+                column for column in required_columns if column not in df.columns
             ]
 
             if missing_columns:
                 messages.error(
-                    request,
-                    f"Missing required columns: {', '.join(missing_columns)}"
+                    request, f"Missing required columns: {', '.join(missing_columns)}"
                 )
                 return redirect("upload_csv")
 
@@ -132,12 +128,23 @@ def upload_csv(request):
                             "company_size": int(row["company_size"]),
                             "license_tier": row["license_tier"],
                             "installed_at": installed_at,
-                        }
+                        },
                     )
 
                     if created:
                         customers_created += 1
 
+                    event_exists = UsageEvent.objects.filter(
+                        customer=customer,
+                        event_type=row["event_type"],
+                        timestamp=event_timestamp,
+                    ).exists()
+                    
+                    
+                    if event_exists:
+                        skipped_rows += 1
+                        continue
+                    
                     UsageEvent.objects.create(
                         customer=customer,
                         event_type=row["event_type"],
@@ -149,20 +156,19 @@ def upload_csv(request):
 
                 except Exception:
                     skipped_rows += 1
-            
-            
+
             # calculate customer health  and update ml churn
             call_command("update_customer_health")
             call_command("update_ml_churn")
-            
+
             messages.success(
                 request,
                 (
                     f"Imported {events_created} events. "
                     f"Created {customers_created} new customers. "
                     f"Skipped {skipped_rows} rows.",
-                    "Analytics and ML predictions refreshed."
-                )
+                    "Analytics and ML predictions refreshed.",
+                ),
             )
 
             return redirect("landing_page")
@@ -170,11 +176,7 @@ def upload_csv(request):
     else:
         form = CSVUploadForm()
 
-    return render(
-        request,
-        "analytics/upload_csv.html",
-        {"form": form}
-    )
+    return render(request, "analytics/upload_csv.html", {"form": form})
 
 
 """
