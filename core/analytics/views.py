@@ -1,41 +1,36 @@
 import json
-import pandas as pd
-
-pd.set_option("display.max_columns", None)
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
-from django.db.models import Count, Avg
-from django.db.models.functions import TruncDate
-from django.utils import timezone
 from datetime import timedelta
-from django.utils.dateparse import parse_datetime
-
-from django.core.management import call_command
-
 from math import ceil
 
-from .forms import CSVUploadForm
+import pandas as pd
 
-from .models import Customer, CustomerHealth, UsageEvent
-from analytics.services import (
-    generate_risk_reasons,
-    generate_recommended_actions,
-    generate_health_insights,
-    generate_customer_alerts,
-    forecast_next_health_score,
-)
+from django.contrib import messages
+from django.core.management import call_command
+from django.db.models import Avg, Count
+from django.db.models.functions import TruncDate
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
-# for api
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from .forms import CSVUploadForm
+from .models import Customer, CustomerHealth, CSVUploadLog, UsageEvent
 from .serializers import (
-    CustomerSerializer,
     CustomerHealthSerializer,
+    CustomerSerializer,
     UsageEventSerializer,
 )
 
-
-from analytics.ml import train_churn_model, get_model_feature_importance
+from analytics.ml import get_model_feature_importance, train_churn_model
+from analytics.services import (
+    forecast_next_health_score,
+    generate_customer_alerts,
+    generate_health_insights,
+    generate_recommended_actions,
+    generate_risk_reasons,
+)
 
 
 def landing_page(request):
@@ -48,22 +43,6 @@ def dashboard(request):
 
 def customer_detail(request, customer_id):
     return render(request, "analytics/customer_detail.html")
-
-
-"""
-CSV file upload
-"""
-
-
-import json
-import pandas as pd
-
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.utils.dateparse import parse_datetime
-
-from .forms import CSVUploadForm
-from .models import Customer, UsageEvent, CSVUploadLog
 
 
 def upload_csv(request):
@@ -92,12 +71,14 @@ def upload_csv(request):
             ]
 
             missing_columns = [
-                column for column in required_columns if column not in df.columns
+                column for column in required_columns
+                if column not in df.columns
             ]
 
             if missing_columns:
                 messages.error(
-                    request, f"Missing required columns: {', '.join(missing_columns)}"
+                    request,
+                    f"Missing required columns: {', '.join(missing_columns)}",
                 )
                 return redirect("upload_csv")
 
@@ -106,13 +87,13 @@ def upload_csv(request):
             duplicates_skipped = 0
             invalid_rows_skipped = 0
 
-            for index, row in df.iterrows():
+            for _, row in df.iterrows():
                 try:
                     installed_at_datetime = parse_datetime(str(row["installed_at"]))
                     event_timestamp = parse_datetime(str(row["timestamp"]))
 
                     if installed_at_datetime is None or event_timestamp is None:
-                        skipped_rows += 1
+                        invalid_rows_skipped += 1
                         continue
 
                     installed_at = installed_at_datetime.date()
@@ -157,18 +138,17 @@ def upload_csv(request):
                 except Exception:
                     invalid_rows_skipped += 1
 
-            # calculate customer health  and update ml churn
             call_command("update_customer_health")
             call_command("update_ml_churn")
-            
+
             CSVUploadLog.objects.create(
-                file_name = csv_file.name,
-                events_created = events_created,
-                customers_created = customers_created,
-                duplicates_skipped = duplicates_skipped,
-                invalid_rows_skipped = invalid_rows_skipped,
+                file_name=csv_file.name,
+                events_created=events_created,
+                customers_created=customers_created,
+                duplicates_skipped=duplicates_skipped,
+                invalid_rows_skipped=invalid_rows_skipped,
             )
-            
+
             messages.success(
                 request,
                 (
@@ -182,25 +162,20 @@ def upload_csv(request):
             )
 
             return redirect("upload_csv")
-
     else:
         form = CSVUploadForm()
 
     return render(request, "analytics/upload_csv.html", {"form": form})
 
 
-"""
-API Endpoints
-"""
-
-
 @api_view(["GET"])
 def customer_list_api(request):
-    "Get request → fetch customers → serialize → return JSON"
     customers = Customer.objects.all()
+
     country = request.GET.get("country")
     if country:
-        customers = Customer.objects.filter(country__iexact=country)
+        customers = customers.filter(country__iexact=country)
+
     serializer = CustomerSerializer(customers, many=True)
     return Response(serializer.data)
 
@@ -228,6 +203,7 @@ def customer_health_api(request, customer_id):
 def customer_events_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     events = customer.usage_events.all()
+
     serializer = UsageEventSerializer(events, many=True)
     return Response(serializer.data)
 
@@ -235,15 +211,11 @@ def customer_events_api(request, customer_id):
 @api_view(["GET"])
 def customer_health_list_api(request):
     health_records = CustomerHealth.objects.select_related("customer").all()
-    risk_label = request.GET.get(
-        "risk_label"
-    )  # captures the term 'risk_label' from the incoming request
 
-    # filtering by risk
+    risk_label = request.GET.get("risk_label")
     if risk_label:
         health_records = health_records.filter(risk_label=risk_label)
 
-    # ordering
     ordering = request.GET.get("ordering")
     if ordering:
         health_records = health_records.order_by(ordering)
@@ -254,22 +226,16 @@ def customer_health_list_api(request):
 
 @api_view(["GET"])
 def summary_api(request):
-    total_customers = Customer.objects.count()
-
     avg_health = (
         CustomerHealth.objects.aggregate(Avg("health_score"))["health_score__avg"] or 0
     )
 
-    healthy = CustomerHealth.objects.filter(risk_label="healthy").count()
-    watch = CustomerHealth.objects.filter(risk_label="watch").count()
-    high_risk = CustomerHealth.objects.filter(risk_label="high_risk").count()
-
     data = {
-        "total_customers": total_customers,
+        "total_customers": Customer.objects.count(),
         "average_health_score": round(avg_health, 1),
-        "healthy": healthy,
-        "watch": watch,
-        "high_risk": high_risk,
+        "healthy": CustomerHealth.objects.filter(risk_label="healthy").count(),
+        "watch": CustomerHealth.objects.filter(risk_label="watch").count(),
+        "high_risk": CustomerHealth.objects.filter(risk_label="high_risk").count(),
     }
 
     return Response(data)
@@ -283,19 +249,14 @@ def dashboard_data_api(request):
     page_size = int(request.GET.get("page_size", 20))
 
     total_records = health_records.count()
-    total_pages = ceil(total_records / page_size)
+    total_pages = ceil(total_records / page_size) if total_records else 1
 
     start = (page - 1) * page_size
     end = start + page_size
-    print(f"total pages: {total_pages} start: {start} end: {end}")
 
     paginated_health_records = health_records.order_by("-churn_risk")[start:end]
-
     top_risk_customers = health_records.order_by("-ml_churn_probability")[:5]
-
-    top_declining_customers = sorted(
-        health_records, key=lambda record: record.churn_risk, reverse=True
-    )[:5]
+    top_rule_based_risk_customers = health_records.order_by("-churn_risk")[:5]
 
     data = {
         "summary": {
@@ -339,7 +300,7 @@ def dashboard_data_api(request):
                     "churn_risk": record.churn_risk,
                     "health_score": record.health_score,
                 }
-                for record in top_declining_customers
+                for record in top_rule_based_risk_customers
             ],
         },
         "pagination": {
@@ -359,7 +320,6 @@ def customer_detail_data_api(request, customer_id):
     health = getattr(customer, "health", None)
     events = customer.usage_events.all()
 
-    # in case a time range is requested
     selected_range = request.GET.get("range", "30")
     if selected_range != "all":
         days = int(selected_range)
@@ -367,7 +327,9 @@ def customer_detail_data_api(request, customer_id):
         events = events.filter(timestamp__gte=start_date)
 
     event_distribution = (
-        events.values("event_type").annotate(count=Count("id")).order_by("event_type")
+        events.values("event_type")
+        .annotate(count=Count("id"))
+        .order_by("event_type")
     )
 
     events_over_time = (
@@ -379,7 +341,7 @@ def customer_detail_data_api(request, customer_id):
 
     data = {
         "customer": {
-            "id": customer_id,
+            "id": customer.id,
             "company_name": customer.company_name,
             "country": customer.country,
             "company_size": customer.company_size,
@@ -415,7 +377,8 @@ def customer_detail_data_api(request, customer_id):
         },
         "events_over_time": {
             "labels": [
-                item["event_date"].strftime("%Y-%m-%d") for item in events_over_time
+                item["event_date"].strftime("%Y-%m-%d")
+                for item in events_over_time
             ],
             "counts": [item["count"] for item in events_over_time],
         },
@@ -427,46 +390,49 @@ def customer_detail_data_api(request, customer_id):
             "next_health_score": forecast_next_health_score(customer),
         },
     }
+
     return Response(data)
 
 
-# accuracy
 @api_view(["GET"])
 def ml_model_metrics_api(request):
     result = train_churn_model()
 
     if result is None:
         return Response({"detail": "Not enough data to train model"}, status=400)
+
     return Response({"accuracy": result["accuracy"]})
 
 
-# feature importance
 @api_view(["GET"])
 def ml_feature_importance_api(request):
     importance = get_model_feature_importance()
+
     if importance is None:
         return Response(
-            {
-                "detail": "Not enough data to train model",
-            },
+            {"detail": "Not enough data to train model"},
             status=400,
         )
+
     return Response({"feature_importance": importance})
 
 
-# customer health history API from snapshots
 @api_view(["GET"])
 def customer_health_history_api(request, customer_id):
     customer = get_object_or_404(Customer, id=customer_id)
     snapshots = customer.health_snapshots.all().order_by("created_at")
+
     data = {
         "labels": [
-            snapshot.created_at.strftime("%Y-%m-%d %H:%M") for snapshot in snapshots
+            snapshot.created_at.strftime("%Y-%m-%d %H:%M")
+            for snapshot in snapshots
         ],
         "health_scores": [snapshot.health_score for snapshot in snapshots],
         "churn_risks": [snapshot.churn_risk for snapshot in snapshots],
         "ml_churn_probabilities": [
-            snapshot.ml_churn_probability for snapshot in snapshots
+            snapshot.ml_churn_probability
+            for snapshot in snapshots
         ],
     }
+
     return Response(data)
