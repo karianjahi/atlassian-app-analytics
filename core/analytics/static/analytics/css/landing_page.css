@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 30px;
@@ -94,6 +98,13 @@ li {
     margin: 0 auto;
 }
 
-
+main,
+.page-section,
+.hero-section,
+.landing-container {
+    width: min(1100px, calc(100% - 32px));
+    margin-left: auto;
+    margin-right: auto;
+}
 
 
