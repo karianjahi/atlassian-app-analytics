@@ -164,8 +164,8 @@ def upload_csv(request):
             return redirect("upload_csv")
     else:
         form = CSVUploadForm()
-
-    return render(request, "analytics/upload_csv.html", {"form": form})
+    upload_logs = CSVUploadLog.objects.order_by("-uploaded_at")[:20]
+    return render(request, "analytics/upload_csv.html", {"form": form, "upload_logs": upload_logs,})
 
 
 @api_view(["GET"])
