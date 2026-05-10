@@ -234,6 +234,11 @@ __pycache__/
 *.pyc
 db.sqlite3
 staticfiles/
-media/
 *.joblib
 .DS_Store
+media/
+test*csv
+core/myreadme.md
+core/psql-in-python.py
+myreadme.md
+core/analytics/churn_mo*
