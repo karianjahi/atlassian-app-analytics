@@ -222,8 +222,23 @@ __marimo__/
 # other files
 README_updated.md
 core/analytics/management/commands/interact_with_db.py
-core/analytics/migrations/00*py
 core/analytics/churn_model.joblib
 step-by-step.md
 README-old.md
 step-by-step.md
+
+
+venv/
+.env
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+*.joblib
+.DS_Store
+media/
+test*csv
+core/myreadme.md
+core/psql-in-python.py
+myreadme.md
+core/analytics/churn_mo*

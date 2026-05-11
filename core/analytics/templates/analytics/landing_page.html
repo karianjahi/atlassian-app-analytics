@@ -1,207 +1,186 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atlassian App Analytics</title>
+
     <link rel="stylesheet" href="{% static 'analytics/css/landing_page.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <header class="page-section">
-        <h1>Atlassian App Analytics</h1>
+<header class="site-header">
+    <div class="container nav-bar">
+        <div class="brand">Atlassian App Analytics</div>
 
-        <p>
-            A customer intelligence platform for Atlassian Marketplace app vendors.
-            Upload customer event data, calculate health scores, predict churn risk,
-            and explore interactive analytics dashboards.
-        </p>
+        <nav class="nav-links">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'upload_csv' %}">Upload CSV</a>
+        </nav>
+    </div>
+</header>
 
-        <p>
-            <strong>Recommended workflow:</strong>
-            Upload a CSV file containing customer events, then explore the dashboard
-            to analyze customer health, machine learning churn predictions, alerts,
-            and forecasts.
-        </p>
+<main>
 
-        <div class="hero-actions">
-            <button type="button" class="button-link" id="toggle-upload-btn">
-                Upload CSV Data
-            </button>
+    <section class="hero-section">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <p class="eyebrow">Customer Intelligence for Marketplace Apps</p>
 
-            <a class="button-link secondary" href="{% url 'dashboard' %}">
-                Explore Dashboard
-            </a>
+                <h1>
+                    Turn Atlassian app usage data into customer health,
+                    churn risk, and actionable insights.
+                </h1>
+
+                <p class="hero-text">
+                    Atlassian App Analytics helps Marketplace-style app vendors
+                    understand product adoption, detect customer risk, forecast health,
+                    and prioritize intervention using analytics and machine learning.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="button-link primary" href="{% url 'upload_csv' %}">
+                        Upload CSV Data
+                    </a>
+
+                    <a class="button-link secondary" href="{% url 'dashboard' %}">
+                        Explore Dashboard
+                    </a>
+                </div>
+
+                <p class="helper-text">
+                    Upload your own customer event data or explore the dashboard using demo data.
+                </p>
+            </div>
+
+            <div class="hero-card">
+                <h2>What the platform does</h2>
+
+                <ul>
+                    <li>Ingests customer event data</li>
+                    <li>Calculates health scores</li>
+                    <li>Predicts churn probability</li>
+                    <li>Explains risk drivers</li>
+                    <li>Generates alerts and forecasts</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container section-heading">
+            <p class="eyebrow">Workflow</p>
+            <h2>From raw usage events to customer intelligence</h2>
+            <p>
+                The application converts uploaded customer activity into useful analytics
+                that product and customer success teams can act on.
+            </p>
         </div>
 
-        <div id="upload-section" class="upload-section">
-            <h2>Upload Customer Events CSV</h2>
+        <div class="container workflow-grid">
+            <div class="info-card">
+                <span class="step">01</span>
+                <h3>Upload data</h3>
+                <p>
+                    Upload a CSV file containing customers, app names, installation dates,
+                    event types, timestamps, and metadata.
+                </p>
+            </div>
 
-            {% if messages %}
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
-            {% endif %}
+            <div class="info-card">
+                <span class="step">02</span>
+                <h3>Process events</h3>
+                <p>
+                    The system validates the file, stores customer records,
+                    skips duplicate events, and logs the upload.
+                </p>
+            </div>
 
-            <form method="post" enctype="multipart/form-data" action="{% url 'upload_csv' %}">
-                {% csrf_token %}
-                {{ upload_form.as_p }}
+            <div class="info-card">
+                <span class="step">03</span>
+                <h3>Refresh analytics</h3>
+                <p>
+                    Customer health scores, churn risk, ML predictions,
+                    alerts, insights, and forecasts are refreshed automatically.
+                </p>
+            </div>
 
-                <button type="submit">Upload CSV</button>
-            </form>
+            <div class="info-card">
+                <span class="step">04</span>
+                <h3>Explore insights</h3>
+                <p>
+                    Use the dashboard and customer detail pages to identify risk,
+                    understand trends, and prioritize action.
+                </p>
+            </div>
         </div>
-
-        <p class="helper-text">
-            You can also explore the dashboard directly using the bundled demo data.
-        </p>
-    </header>
-
-    <section class="page-section">
-        <h2>Background</h2>
-        <p>
-            Atlassian Marketplace vendors build apps that extend products like Jira and Confluence.
-            As customers interact with these apps, they generate usage signals such as installations,
-            configuration events, feature usage, sync failures, and support activity.
-        </p>
-        <p>
-            This project turns those signals into analytics that help product and customer-success teams
-            understand which customers are healthy, which are at risk, and which may need attention.
-        </p>
     </section>
 
-    <section class="page-section">
-        <h2>Motivation</h2>
-        <p>
-            Raw event data alone is difficult to interpret. Product teams need clear answers:
-        </p>
+    <section class="section muted-section">
+        <div class="container feature-grid">
+            <div>
+                <p class="eyebrow">Capabilities</p>
+                <h2>A full-stack analytics platform</h2>
+                <p>
+                    This project combines backend engineering, REST APIs,
+                    frontend rendering, data science, machine learning,
+                    and deployment into one complete product.
+                </p>
+            </div>
 
-        <ul>
-            <li>Which customers are actively using the app?</li>
-            <li>Which customers are likely to churn?</li>
-            <li>Which features are being adopted?</li>
-            <li>How is customer health changing over time?</li>
-            <li>Which customers should be prioritized first?</li>
-        </ul>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>CSV ingestion</strong>
+                    <span>Validated uploads with duplicate protection.</span>
+                </div>
+
+                <div class="feature-item">
+                    <strong>Health scoring</strong>
+                    <span>Rule-based scoring from usage, adoption, reliability, and support data.</span>
+                </div>
+
+                <div class="feature-item">
+                    <strong>ML churn prediction</strong>
+                    <span>Logistic regression model with feature importance.</span>
+                </div>
+
+                <div class="feature-item">
+                    <strong>Historical tracking</strong>
+                    <span>Snapshots, trends, insights, alerts, and forecasts.</span>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section class="page-section">
-        <h2>Inspired by codefortynine</h2>
-        <p>
-            This mini-project is inspired by the kind of Atlassian Marketplace apps built by
-            codefortynine GmbH in Karlsruhe.
-        </p>
+    <section class="section">
+        <div class="container tech-stack">
+            <p class="eyebrow">Technology Stack</p>
+            <h2>Built with practical production technologies</h2>
 
-        <p>
-            The prototype is designed around customer behaviour analytics for app portfolios similar to:
-        </p>
-
-        <ul>
-            <li>Deep Clone for Jira</li>
-            <li>External Data for Jira Fields</li>
-            <li>Quick Filters for Jira Dashboards</li>
-            <li>Merge Agent for Jira</li>
-            <li>Snipe-IT for Jira</li>
-        </ul>
-
-        <p>
-            The project is not affiliated with codefortynine. It is a portfolio prototype built to
-            demonstrate backend engineering, analytics, machine learning, and product thinking.
-        </p>
+            <div class="tech-tags">
+                <span>Django</span>
+                <span>Django REST Framework</span>
+                <span>PostgreSQL</span>
+                <span>pandas</span>
+                <span>scikit-learn</span>
+                <span>Chart.js</span>
+                <span>JavaScript</span>
+                <span>Render</span>
+            </div>
+        </div>
     </section>
 
-    <section class="page-section">
-        <h2>What the Platform Does</h2>
+</main>
 
-        <ul>
-            <li>Tracks customer usage events</li>
-            <li>Calculates rule-based customer health scores</li>
-            <li>Classifies customers as Healthy, Watch, or High Risk</li>
-            <li>Predicts churn probability using machine learning</li>
-            <li>Shows feature importance for model explainability</li>
-            <li>Stores historical health snapshots</li>
-            <li>Visualizes customer health trends over time</li>
-            <li>Generates automated insights and alerts</li>
-            <li>Forecasts the next health score based on recent trends</li>
-            <li>Ranks customers by churn risk for prioritization</li>
-        </ul>
-    </section>
+<footer class="site-footer">
+    <div class="container footer-content">
+        <p>© {% now "Y" %} Dr Joseph Njeri. All rights reserved.</p>
+        <a href="{% url 'dashboard' %}">Open Dashboard</a>
+    </div>
+</footer>
 
-    <section class="page-section">
-        <h2>Technical Architecture</h2>
-
-        <p>
-            The application uses Django as the backend, Django REST Framework for APIs,
-            PostgreSQL for persistence, and JavaScript with Chart.js for interactive frontend rendering.
-        </p>
-
-        <pre>
-PostgreSQL
-   ↓
-Django Models
-   ↓
-Analytics Services
-   ↓
-Machine Learning Pipeline
-   ↓
-Django REST API
-   ↓
-JavaScript Frontend
-   ↓
-Charts, Tables, Alerts, Insights
-    </pre>
-    </section>
-
-    <section class="page-section">
-        <h2>Machine Learning Layer</h2>
-
-        <p>
-            The machine learning component uses customer health and behaviour metrics to estimate churn
-            probability. The model is trained with scikit-learn and saved using joblib.
-        </p>
-
-        <ul>
-            <li>Builds a pandas training DataFrame from Django data</li>
-            <li>Trains a logistic regression churn model</li>
-            <li>Evaluates model accuracy</li>
-            <li>Stores ML churn probability per customer</li>
-            <li>Displays model feature importance on the dashboard</li>
-        </ul>
-    </section>
-
-    <section class="page-section">
-        <h2>Current Limitations</h2>
-
-        <ul>
-            <li>Uses synthetic/demo data</li>
-            <li>Uses synthetic churn labels for prototype training</li>
-            <li>Does not yet integrate with real Atlassian APIs</li>
-            <li>Does not yet use real subscription cancellation data</li>
-            <li>No authentication or role-based access yet</li>
-            <li>Forecasting is currently trend-based and simple</li>
-        </ul>
-    </section>
-
-    <section class="page-section">
-        <h2>Why This Project Matters</h2>
-
-        <p>
-            This project shows how raw product usage data can become actionable customer intelligence.
-            It combines backend development, REST API design, frontend rendering, analytics, machine learning,
-            explainability, forecasting, and customer-success thinking in one coherent prototype.
-        </p>
-
-        <a class="button-link" href="{% url 'dashboard' %}">Explore Dashboard</a>
-        <a class="button-link" href="{% url 'upload_csv'%}">Upload CSV Data</a>
-    </section>
-
-    <footer class="app-footer">
-        <p>© {% now "Y" %} Dr. Joseph Njeri. All rights reserved.</p>
-    </footer>
-    <script src="{% static 'analytics/js/landing_page.js' %}"></script>
 </body>
-
 </html>

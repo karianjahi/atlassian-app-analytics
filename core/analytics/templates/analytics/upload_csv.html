@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Add processing statement -->
-     
+
                 <button type="submit" id="upload-submit-btn">Upload CSV</button>
                 <p id="processing-message" class="processing-message hidden">
                     Processing CSV, updating analytics, and refreshing ML predictions...
@@ -83,6 +83,39 @@
                     <strong>Note:</strong> <code>installed_at</code> is required for every upload.
                     It represents when the customer installed the app.
                 </p>
+            </div>
+
+            <div class="upload-history">
+                <h2>Upload History</h2>
+
+                {% if upload_logs %}
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>File</th>
+                            <th>Events</th>
+                            <th>Customers</th>
+                            <th>Duplicates</th>
+                            <th>Invalid Rows</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in upload_logs %}
+                        <tr>
+                            <td>{{ log.uploaded_at|date:"M d, Y H:i" }}</td>
+                            <td>{{ log.file_name }}</td>
+                            <td>{{ log.events_created }}</td>
+                            <td>{{ log.customers_created }}</td>
+                            <td>{{ log.duplicates_skipped }}</td>
+                            <td>{{ log.invalid_rows_skipped }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="no-history">No uploads have been recorded yet.</p>
+                {% endif %}
             </div>
 
             <div class="page-actions">
