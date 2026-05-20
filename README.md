@@ -7,7 +7,7 @@
 ![Chart.js](https://img.shields.io/badge/Charts-Chart.js-orange)
 ![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-f7931e?logo=scikitlearn)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
-![Render](https://img.shields.io/badge/Deployment-Render-46E3B7?logo=render)
+![Railway](https://img.shields.io/badge/Deployment-Railway-0B0D0E?logo=railway)
 ![REST API](https://img.shields.io/badge/API-Django_REST_Framework-red)
 ![WhiteNoise](https://img.shields.io/badge/Static-WhiteNoise-purple)
 ![Status](https://img.shields.io/badge/Status-Live-success)
@@ -38,7 +38,7 @@ The project combines:
 - upload audit logging
 - duplicate detection
 - trend-based forecasting
-- cloud deployment on Render
+- cloud deployment on Railway
 
 The goal is to demonstrate how product usage data can be transformed into actionable customer intelligence.
 
@@ -155,7 +155,7 @@ Examples:
 ### 🧪 Synthetic Data Generation
 Demo data and large CSV generators.
 
-### 🌐 Deployment on Render
+### 🌐 Deployment on Railway
 - PostgreSQL
 - Gunicorn
 - WhiteNoise
@@ -182,7 +182,7 @@ Demo data and large CSV generators.
 - joblib
 
 ### Deployment
-- Render
+- Railway
 - Gunicorn
 - WhiteNoise
 
