@@ -15,7 +15,7 @@
 Customer Behaviour Analytics Platform for Atlassian Marketplace Apps.
 
 > **Live Demo:** [customer-health](https://customerhealth-atlassian-app-analytics.up.railway.app/upload-csv/)  
-> **GitHub Repository:** https://github.com/karianjahi/atlassian-app-analytics
+> **GitHub Repository:** [atlassian app analytics](https://github.com/karianjahi/atlassian-app-analytics)
 
 ## 📖 Overview
 
